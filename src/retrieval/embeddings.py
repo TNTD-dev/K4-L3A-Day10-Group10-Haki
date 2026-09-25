@@ -29,7 +29,7 @@ class MiniLMEmbeddings(Embeddings):
 
 def build_embeddings(settings: Settings) -> Embeddings:
     """Build the configured embedding client for indexing and querying."""
-    provider = settings.embedding_provider
+    provider = settings.embedding_provider.strip().lower()
     if provider == "openai":
         if not settings.openai_api_key:
             raise RuntimeError(

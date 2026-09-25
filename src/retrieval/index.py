@@ -42,6 +42,22 @@ class LocalEmbeddingIndex:
 
     @staticmethod
     def _build_documents(df: pd.DataFrame) -> list[dict[str, Any]]:
+        required_columns = {
+            "paper_id",
+            "title",
+            "text_for_embedding",
+            "published",
+            "authors_joined",
+            "categories_joined",
+            "summary",
+            "abs_url",
+            "pdf_url",
+        }
+        missing = sorted(required_columns - set(df.columns))
+        if missing:
+            raise ValueError(f"Clean dataframe is missing index fields: {', '.join(missing)}.")
+        if df.empty:
+            raise ValueError("Cannot build a vector index from an empty dataframe.")
         records = df.to_dict(orient="records")
         documents: list[dict[str, Any]] = []
         for index, row in enumerate(records):
@@ -93,16 +109,15 @@ class LocalEmbeddingIndex:
         persist_path.mkdir(parents=True, exist_ok=True)
 
         embedding_model = build_embeddings(settings)
+        embeddings = embedding_model.embed_documents([document["content"] for document in documents])
         client = chromadb.PersistentClient(path=str(persist_path))
-        try:
+        existing_collections = {collection.name for collection in client.list_collections()}
+        if collection_name in existing_collections:
             client.delete_collection(name=collection_name)
-        except Exception:
-            pass
         collection = client.create_collection(
             name=collection_name,
             configuration={"hnsw": {"space": "cosine"}},
         )
-        embeddings = embedding_model.embed_documents([document["content"] for document in documents])
         collection.add(
             ids=[document["record_id"] for document in documents],
             embeddings=embeddings,
@@ -132,11 +147,21 @@ class LocalEmbeddingIndex:
     @classmethod
     def load(cls, settings: Settings, embeddings_path: Path | None = None) -> "LocalEmbeddingIndex":
         payload = read_json(embeddings_path or settings.paths.embeddings_json)
+        manifest_provider = payload.get("embedding_provider")
+        manifest_model = payload.get("embedding_model")
+        configured_provider = settings.embedding_provider.strip().lower()
+        configured_model = settings.embedding_model
+        if manifest_provider != configured_provider or manifest_model != configured_model:
+            raise RuntimeError(
+                "Embedding manifest does not match current settings "
+                f"(manifest={manifest_provider}/{manifest_model}, "
+                f"configured={configured_provider}/{configured_model}); rebuild the index."
+            )
         return cls(
             settings=settings,
             collection_name=payload["collection_name"],
             documents=payload["documents"],
-            persist_path=Path(payload["persist_path"]),
+            persist_path=settings.paths.chroma_dir,
         )
 
     def search(self, query: str, top_k: int | None = None) -> list[SearchResult]:
