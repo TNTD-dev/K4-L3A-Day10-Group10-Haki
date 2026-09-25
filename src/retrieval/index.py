@@ -132,7 +132,12 @@ class LocalEmbeddingIndex:
                 "backend": "chroma",
                 "embedding_provider": settings.embedding_provider,
                 "embedding_model": settings.embedding_model,
-                "persist_path": str(persist_path.relative_to(settings.paths.project_dir)),
+                # Tuong doi khi nam trong project (khong hardcode path may local); ngoai project (vd tmp) giu nguyen.
+                "persist_path": str(
+                    persist_path.relative_to(settings.paths.project_dir)
+                    if persist_path.is_relative_to(settings.paths.project_dir)
+                    else persist_path
+                ),
                 "collection_name": collection_name,
                 "documents": documents,
             },
