@@ -54,6 +54,7 @@ class Settings:
     ollama_base_url: str
     custom_llm_api_key: str | None
     custom_llm_base_url: str | None
+    embedding_provider: str
     embedding_model: str
     baseline_collection_name: str
     corrupted_collection_name: str
@@ -123,7 +124,11 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
         custom_llm_api_key=os.getenv("CUSTOM_LLM_API_KEY"),
         custom_llm_base_url=os.getenv("CUSTOM_LLM_BASE_URL"),
-        embedding_model="sentence-transformers/all-MiniLM-L6-v2",
+        embedding_provider=os.getenv("EMBEDDING_PROVIDER", "openai").strip().lower(),
+        embedding_model=os.getenv(
+            "EMBEDDING_MODEL",
+            "text-embedding-3-small",
+        ),
         baseline_collection_name="papers-baseline",
         corrupted_collection_name="papers-corrupted",
         repaired_collection_name="papers-repaired",
@@ -133,7 +138,7 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         max_results=24,
         top_k=4,
         freshness_threshold_days=freshness_threshold_days,
-        refresh_source=os.getenv("REFRESH_SOURCE", "").lower() in {"1", "true", "yes"},
+        refresh_source=os.getenv("REFRESH_SOURCE", "true").lower() in {"1", "true", "yes"},
         refresh_test_set=os.getenv("REFRESH_TEST_SET", "").lower() in {"1", "true", "yes"},
         paths=paths,
     )

@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "input_rows": 24,
+  "output_rows": 21,
+  "run_date": "2026-09-25",
+  "scenarios": [
+    {
+      "name": "drop_latest_records",
+      "affected_count": 5,
+      "affected_paper_ids": [
+        "10.21203/rs.3.rs-10489777/v1",
+        "10.70267/aitia.2026482489",
+        "10.21203/rs.3.rs-10349437/v1",
+        "10.54254/2755-2721/2026.36624",
+        "10.36887/2415-8453-2026-3-2"
+      ],
+      "parameters": {
+        "fraction": 0.2,
+        "dropped_count": 5
+      },
+      "row_count_before": 24,
+      "row_count_after": 19
+    },
+    {
+      "name": "blank_summary",
+      "affected_count": 1,
+      "affected_paper_ids": [
+        "10.28932/jutisi.v12i2.13099"
+      ],
+      "parameters": {
+        "selected_rank": 0
+      },
+      "row_count_before": 19,
+      "row_count_after": 19
+    },
+    {
+      "name": "inject_noise",
+      "affected_count": 1,
+      "affected_paper_ids": [
+        "10.20944/preprints202608.1849.v1"
+      ],
+      "parameters": {
+        "marker": "[NOISE_###@@@%%%]",
+        "selected_rank": 1
+      },
+      "row_count_before": 19,
+      "row_count_after": 19
+    },
+    {
+      "name": "truncate_title",
+      "affected_count": 1,
+      "affected_paper_ids": [
+        "10.21203/rs.3.rs-10423755/v1"
+      ],
+      "parameters": {
+        "max_characters": 7,
+        "selected_rank": 2
+      },
+      "row_count_before": 19,
+      "row_count_after": 19
+    },
+    {
+      "name": "stale_date",
+      "affected_count": 6,
+      "affected_paper_ids": [
+        "10.28932/jutisi.v12i2.13099",
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.63646/kpqm1958",
+        "10.52060/juptik.v4i1.4318",
+        "10.63125/gseh0k17"
+      ],
+      "parameters": {
+        "days_subtracted": 365,
+        "fraction": 0.3,
+        "selected_ranks": [
+          0,
+          4,
+          7,
+          11,
+          14,
+          18
+        ]
+      },
+      "row_count_before": 19,
+      "row_count_after": 19
+    },
+    {
+      "name": "duplicate_rows",
+      "affected_count": 2,
+      "affected_paper_ids": [
+        "10.28932/jutisi.v12i2.13099",
+        "10.20944/preprints202608.1849.v1"
+      ],
+      "parameters": {
+        "duplicate_count": 2,
+        "selected_ranks": [
+          0,
+          1
+        ]
+      },
+      "row_count_before": 19,
+      "row_count_after": 21
+    }
+  ]
+}
