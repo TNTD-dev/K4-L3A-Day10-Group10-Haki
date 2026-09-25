@@ -119,6 +119,7 @@ def _artifact_status(settings: Settings) -> list[dict[str, Any]]:
         ("Baseline retrieval metrics", settings.paths.baseline_metrics),
         ("GX baseline report", settings.paths.baseline_quality_report),
         ("GX corrupted report", settings.paths.corrupted_quality_report),
+        ("GX repaired report", settings.paths.quality_dir / "repaired_quality_report.json"),
         ("Freshness report", settings.paths.freshness_report),
         ("Corrupted retrieval metrics", settings.paths.corrupted_metrics),
         ("Repaired retrieval metrics", settings.paths.repaired_metrics),
@@ -150,8 +151,19 @@ def build_snapshot(settings: Settings) -> dict[str, Any]:
     gx_artifacts = {
         "baseline": _read_optional_json(settings.paths.baseline_quality_report),
         "corrupted": _read_optional_json(settings.paths.corrupted_quality_report),
+        "repaired": _read_optional_json(settings.paths.quality_dir / "repaired_quality_report.json"),
         "freshness": _read_optional_json(settings.paths.freshness_report),
     }
+
+    def dataset_quality(name: str) -> str:
+        report = gx_artifacts[name]
+        if not isinstance(report, dict):
+            return "waiting"
+        if report.get("success") is True:
+            return "passed"
+        if report.get("success") is False:
+            return "failed"
+        return "waiting"
 
     latest_state = latest.get("state") if latest else "WAITING"
     if latest_state == "HEALTHY":
@@ -192,6 +204,14 @@ def build_snapshot(settings: Settings) -> dict[str, Any]:
             }
         )
 
+    gx_status = "waiting"
+    if isinstance(quality_report, dict):
+        embedded_gx = quality_report.get("gx")
+        if isinstance(embedded_gx, dict):
+            gx_status = embedded_gx.get("status", "waiting")
+        elif quality_report.get("engine"):
+            gx_status = "passed" if quality_report.get("success") is True else "failed"
+
     return {
         "generated_at": datetime.now(UTC).isoformat(),
         "health": pipeline_health,
@@ -204,13 +224,10 @@ def build_snapshot(settings: Settings) -> dict[str, Any]:
             ) if isinstance(quality_report, dict) else "waiting",
             "report": quality_report,
             "checks": checks,
-            "gx_status": (
-                quality_report.get("gx", {}).get("status", "waiting")
-                if isinstance(quality_report, dict)
-                else "waiting"
-            ),
+            "gx_status": gx_status,
         },
         "gx_artifacts": gx_artifacts,
+        "dataset_quality": {name: dataset_quality(name) for name in ("baseline", "corrupted", "repaired")},
         "freshness": freshness,
         "age_distribution": _age_distribution(clean_rows),
         "datasets": {
@@ -235,6 +252,7 @@ def artifact_signature(settings: Settings) -> tuple[tuple[str, int | None], ...]
         settings.paths.self_healing_latest_json,
         settings.paths.baseline_quality_report,
         settings.paths.corrupted_quality_report,
+        settings.paths.quality_dir / "repaired_quality_report.json",
         settings.paths.freshness_report,
         settings.paths.baseline_metrics,
         settings.paths.corrupted_metrics,

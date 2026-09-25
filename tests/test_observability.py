@@ -3,13 +3,17 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+import sys
 
 import pandas as pd
 import pytest
 
 from automation.quality_gate import CoreQualityGate
 from core.config import load_settings
-from core.utils import read_json
+from core.utils import read_json, write_json
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from dashboard.service import build_snapshot
 from evaluation.metrics import _token_f1
 from evaluation.testset import build_test_set
 from ingestion.cleaning import rebuild_clean_dataframe_from_raw
@@ -147,6 +151,25 @@ def test_testset_skips_unanswerable_type(clean_df, settings):
 def test_report_and_dashboard_handle_missing_artifacts(settings):
     generate_corruption_report(settings.paths.comparison_report, {}, {}, {}, {}, {}, {}, {})
     assert "Chưa đủ artifacts" in build_dashboard(settings).read_text(encoding="utf-8")
+
+
+def test_realtime_dashboard_uses_actual_gx_quality_reports(settings):
+    reports = (
+        (settings.paths.baseline_quality_report, True),
+        (settings.paths.corrupted_quality_report, False),
+        (settings.paths.quality_dir / "repaired_quality_report.json", True),
+    )
+    for path, success in reports:
+        write_json(path, {"engine": "great_expectations 1.x", "success": success})
+
+    snapshot = build_snapshot(settings)
+
+    assert snapshot["dataset_quality"] == {
+        "baseline": "passed",
+        "corrupted": "failed",
+        "repaired": "passed",
+    }
+    assert snapshot["quality"]["gx_status"] == "passed"
 
 
 def test_hard_benchmark_leakage_filter_and_ci():

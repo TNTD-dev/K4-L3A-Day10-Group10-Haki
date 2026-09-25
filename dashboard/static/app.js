@@ -16,6 +16,10 @@
   const safeMetric = (metricSet, name) => {
     if (!metricSet || typeof metricSet !== "object") return "Waiting for pipeline artifact";
     const flat = metricSet.metrics && typeof metricSet.metrics === "object" ? metricSet.metrics : metricSet;
+    if (typeof flat.retrieval_hit_rate === "number" && typeof flat.mean_token_f1 === "number") {
+      const judge = typeof flat.judge_accuracy === "number" ? ` · Judge ${(flat.judge_accuracy * 100).toFixed(0)}%` : "";
+      return `Hit ${(flat.retrieval_hit_rate * 100).toFixed(0)}% · Token F1 ${flat.mean_token_f1.toFixed(2)}${judge}`;
+    }
     const keys = Object.keys(flat);
     if (!keys.length) return "Metrics artifact available";
     return keys.slice(0, 3).map((key) => `${key}: ${typeof flat[key] === "number" ? flat[key].toFixed(3) : String(flat[key])}`).join(" · ");
@@ -33,7 +37,7 @@
     el("healthDetail").textContent = data.last_run ? `${data.latest_state} · ${prettyTime(data.last_run.updated_at)}` : "No self-healing run yet";
     const qualityStatus = data.quality?.status || "waiting";
     el("qualityValue").textContent = qualityStatus === "passed" ? "Passed" : qualityStatus === "failed" ? "Failed" : "Waiting";
-    el("qualitySub").textContent = data.quality?.gx_status === "waiting" ? "GX adapter waiting · core gate active" : data.quality?.gx_status === "passed" ? "Core + GX checks available" : "Waiting for pipeline artifact";
+    el("qualitySub").textContent = data.quality?.gx_status === "waiting" ? "GX adapter waiting · core gate active" : data.quality?.gx_status === "passed" ? "Core + GX checks available" : "GX checks reported failures";
     const freshness = data.freshness || {};
     el("freshnessValue").textContent = freshness.stale_ratio == null ? "—" : ratioLabel(freshness.stale_ratio);
     el("freshnessSub").textContent = freshness.total_rows ? `${countLabel(freshness.stale_rows)} stale of ${countLabel(freshness.total_rows)} papers` : "Waiting for clean dataset";
@@ -47,14 +51,15 @@
   }
 
   function renderComparison(data) {
+    const qualityLabel = (key) => ({ passed: "Passed", failed: "Failed", waiting: "Waiting" })[data.dataset_quality?.[key]] || "Waiting";
     const states = [
-      { key: "baseline", label: "Baseline", swatch: "baseline", quality: "Waiting", rows: data.datasets?.baseline?.rows, docs: data.datasets?.baseline?.documents },
-      { key: "corrupted", label: "Corrupted", swatch: "corrupted", quality: "Detected", rows: data.datasets?.corrupted?.rows, docs: data.datasets?.corrupted?.documents },
-      { key: "repaired", label: "Repaired", swatch: "repaired", quality: data.health === "healthy" ? "Passed" : "Waiting", rows: data.datasets?.repaired?.rows, docs: data.datasets?.repaired?.documents },
+      { key: "baseline", label: "Baseline", swatch: "baseline", quality: qualityLabel("baseline"), rows: data.datasets?.baseline?.rows, docs: data.datasets?.baseline?.documents },
+      { key: "corrupted", label: "Corrupted", swatch: "corrupted", quality: qualityLabel("corrupted"), rows: data.datasets?.corrupted?.rows, docs: data.datasets?.corrupted?.documents },
+      { key: "repaired", label: "Repaired", swatch: "repaired", quality: qualityLabel("repaired"), rows: data.datasets?.repaired?.rows, docs: data.datasets?.repaired?.documents },
     ];
     const body = states.map((row) => {
       const metricText = safeMetric(data.retrieval_metrics?.[row.key], row.key);
-      const qualityClass = row.quality === "Passed" ? "passed" : row.quality === "Detected" ? "failed" : "waiting";
+      const qualityClass = row.quality === "Passed" ? "passed" : row.quality === "Failed" ? "failed" : "waiting";
       return `<tr><td><span class="state-name"><i class="state-swatch ${row.swatch}"></i>${row.label}</span></td><td><span class="quality-pill ${qualityClass}">● ${row.quality}</span></td><td>${countLabel(row.rows)}</td><td>${countLabel(row.docs)}</td><td>${escapeHtml(metricText)}</td></tr>`;
     }).join("");
     el("comparisonBody").innerHTML = body;
