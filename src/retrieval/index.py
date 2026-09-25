@@ -132,7 +132,7 @@ class LocalEmbeddingIndex:
                 "backend": "chroma",
                 "embedding_provider": settings.embedding_provider,
                 "embedding_model": settings.embedding_model,
-                "persist_path": str(persist_path),
+                "persist_path": str(persist_path.relative_to(settings.paths.project_dir)),
                 "collection_name": collection_name,
                 "documents": documents,
             },
