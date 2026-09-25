@@ -1,5 +1,7 @@
 # Observability Workstream — Checklist, Contract & Demo
 
+> Đây là ghi chú thiết kế của workstream. Trạng thái và số liệu nộp bài cuối cùng nằm trong [`report/group_report.md`](../report/group_report.md). Corpus live hiện không có `subject`, nên test set thực tế là 4 summary / 4 authors / 2 date, **không** có categories.
+
 > Owner: **Observability & Evaluation**. Rubric phụ trách: #6 (10đ) + #7 (15đ) + #8 (15đ) + Bonus B1/B2.
 > Nguyên tắc: **không sửa** `ingestion/crossref.py`, `ingestion/cleaning.py`, `retrieval/*`, `pipelines/phase1.py` cho tới khi merge.
 
@@ -11,7 +13,7 @@
   - [x] Thêm: schema contract, volume vs baseline, `title` len ≥ 8, freshness `age_days` (warning), `data_fingerprint`, `enforce_quality_gate`
   - [x] Không raise khi data xấu → `success=False`; ghi `data/quality/<name>_quality_report.json`
 - [x] `build_freshness_report` — stale_ratio, `is_fresh` (≤ 25%), `latest_age_days`, phân bố `age_days`
-- [x] `evaluation/testset.py` — 10 câu tất định, 3/3/2/2, wording khớp `qa.py`, rải đều theo ngày
+- [x] `evaluation/testset.py` — 10 câu tất định, wording khớp `qa.py`, rải đều theo ngày; thực tế 4/4/2 và thiếu categories do raw source
 - [x] `ingestion/corruption.py` — 6 lỗi tất định, không sửa input, rebuild `text_for_embedding`, log đủ 6 mục
 - [x] `pipelines/corruption_flow.py` — corrupt → gate → eval → **auto-repair (B2)** → gate → eval → report → dashboard
 - [x] `observability/reporting.py` — phase1 report + bảng 3 trạng thái + detection matrix + verdict
@@ -19,15 +21,15 @@
 - [x] `tests/test_observability.py` — 15 test trên raw snapshot thật, pass (một phần B3)
 
 ### B. Kiểm chứng (sau khi cài env)
-- [x] `python -m pytest tests -q` → 21 passed (15 Obs + 6 RAG)
+- [x] `uv run --extra dev pytest -q` → 23 passed sau cập nhật dashboard
 - [x] Soát `corruption_report.md`: đủ 3 cột, silent failure = `inject_noise`
 
 ### C. Merge với RAG
-- [ ] Người RAG xác nhận clean df có đủ `REQUIRED_COLUMNS` (xem mục 2)
-- [ ] `phase1.py` (phía RAG) gọi: `run_data_quality_checks(df, s, "baseline")` → `enforce_quality_gate(report)` **trước** `LocalEmbeddingIndex.build`, `build_freshness_report(df, s, s.paths.freshness_report)`, `build_test_set` (chỉ khi chưa có file hoặc `REFRESH_TEST_SET`), `generate_phase1_report(...)`
-- [ ] Chạy `run_phase1.py` → `run_corruption_flow.py` trên data thật, tick checkpoint CP1 → CP5
-- [ ] Kiểm tra corrupted metrics **giảm** và repaired ≈ baseline (±0.01); không khớp → điều tra, **không sửa số**
-- [ ] Commit artifact thật trong `data/`
+- [x] Clean dataframe có đủ `REQUIRED_COLUMNS` và index metadata contract.
+- [x] `phase1.py` chạy quality gate trước khi build baseline index; xuất freshness, test set, metrics và report.
+- [x] Chạy `run_phase1.py` → `run_corruption_flow.py` trên raw 24 records; CP1 → CP5 hoàn thành về kỹ thuật.
+- [x] Corrupted metrics giảm và repaired khớp baseline; số liệu giữ nguyên từ pipeline.
+- [x] Artifacts thật trong `data/` đã được commit vào `main`.
 
 ## 1b. Kiến trúc — 5 pillar của Data Observability
 
@@ -42,7 +44,7 @@
 
 - **Gate:** `report["success"]` = mọi expectation critical pass. `enforce_quality_gate()` raise `DataQualityError` và được gọi **trước khi index** ở production path (repair; phase1 phía RAG cũng nên gọi).
 - **Audit mode:** nhánh corrupted cố ý không enforce, vẫn index để *đo* silent failure. Đây là thí nghiệm, không phải production.
-- **Kết quả chạy thật:** 5/6 lỗi bị phát hiện ở tầng dữ liệu; `inject_noise` là silent, chỉ lộ qua Token F1, dùng làm luận điểm cho lớp giám sát thứ hai.
+- **Kết quả chạy thật:** GX/freshness phát hiện volume, blank summary, truncate title, stale date và duplicate; `inject_noise` giữ độ dài hợp lệ nên là silent đối với GX, nhưng core self-healing gate B2 phát hiện marker `~#`. Token F1 cũng cho thấy tác động tổng hợp.
 
 ## 2. Merge contract (RAG ↔ Observability)
 
@@ -51,7 +53,7 @@
 | Clean df columns | `paper_id, title, summary, authors_joined, categories_joined, published, age_days, text_for_embedding` (+ `abs_url, pdf_url` cho index) |
 | `published` | string `YYYY-MM-DD` |
 | `age_days` | int, `(run_date - published).days` |
-| `text_for_embedding` | đúng format của `ingestion.corruption.build_text_for_embedding` (5 dòng Title/Authors/Published/Categories/Summary). Cleaning nên **import hàm này** để 2 bên không lệch |
+| `text_for_embedding` | `ingestion.cleaning.build_embedding_text` tạo 5 dòng Title/Authors/Published/Categories/Summary; corruption gọi lại hàm này để không lệch |
 | Repair | `corruption_flow.repair_from_raw` gọi `load_raw_records(raw_records_json)` → `build_clean_dataframe(records, now)` |
 | Evaluate | `corruption_flow.evaluate` gọi `LocalEmbeddingIndex.build(df, s, <embeddings path>)` + `evaluate_pipeline` |
 
@@ -81,7 +83,7 @@ Câu chuyện: *"Agent không báo lỗi — nhưng dữ liệu thì có"*.
 |---|---|---|
 | 0:00 | Dashboard, dải trạng thái Baseline | "Pipeline sạch: GX PASS, Freshness FRESH, hit rate X." |
 | 0:40 | Terminal: `python script/run_corruption_flow.py` | Log `[gate] corrupted quality=False failed=[...]` hiện ngay |
-| 1:30 | Dashboard → cột **Corrupted** đỏ, bảng Corruption → Detection | "4/6 lỗi bị chặn. 2 lỗi **SILENT**: noise và drop-latest — GX không thấy, chỉ metric RAG thấy." |
+| 1:30 | Dashboard → cột **Corrupted** đỏ, bảng Corruption → Detection | "GX/freshness bắt volume, blank, title, stale và duplicate; noise lọt qua GX nhưng core B2 bắt marker và Token F1 giảm." |
 | 2:30 | Mở `corrupted_answers.json`, 1 câu trả lời sai tự tin | "Đây là silent failure: câu trả lời trôi chảy nhưng sai." |
 | 3:15 | Dashboard → cột **Repaired** xanh, banner "đã phục hồi" | "Gate fail → auto-repair từ raw bất biến. Chạy lại lần 2 ra y hệt → idempotent." |
 | 4:00 | Q&A | xem mục 5 |

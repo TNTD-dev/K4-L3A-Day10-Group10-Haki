@@ -1,5 +1,7 @@
 # PLAN — Day 10 Data Pipeline & Observability (Group10-Haki)
 
+> Đây là kế hoạch trước khi tích hợp, không phải checklist nghiệm thu hiện tại. Trạng thái thật, cấu hình OpenAI, số liệu và mục còn thiếu được ghi trong [`report/group_report.md`](../report/group_report.md) và [`docs/TEAM.md`](TEAM.md).
+
 > Checklist làm việc của nhóm. Tick `[x]` khi xong + commit. Số liệu trong report PHẢI sinh từ pipeline thật.
 
 ## 0. Interface đã có sẵn (KHÔNG sửa, code phải khớp)

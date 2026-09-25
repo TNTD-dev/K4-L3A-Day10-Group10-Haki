@@ -13,6 +13,8 @@
 - 🎯 **Hiểu luật chơi & thang điểm:** Xem [Tiêu Chí Chấm Điểm (docs/RUBRIC.md)](docs/RUBRIC.md) và [Nội Quy Thực Hành (docs/RULES.md)](docs/RULES.md).
 - 📋 **Phân công & nộp bài cuối giờ:** Điền thông tin vào [Phân Công Nhóm (docs/TEAM.md)](docs/TEAM.md) và đối chiếu checklist tại [Hướng Dẫn Nộp Bài (docs/SUBMISSION.md)](docs/SUBMISSION.md).
 
+> **Trạng thái bài nộp của Group 10 — Haki (2026-09-25):** CP0–CP5 đã được triển khai và chạy end-to-end; `main` chứa raw/clean data, ba Chroma collections, GX/freshness reports, metrics, hard benchmark và bonus dashboard/self-healing. Xem [báo cáo nhóm](report/group_report.md), [phân công hai thành viên](docs/TEAM.md), [kịch bản demo 3 phút](report/demo_3min.md) và [ảnh dashboard sau drill](data/reports/bonus_dashboard_success.png). Giới hạn còn lại: 24 Crossref records live không có `subject`, nên bộ test 10 câu chưa phủ `categories`; không nên báo cáo là đã đạt mục này. Đoạn bên dưới vẫn giữ phần mô tả đề bài gốc để tiện đối chiếu.
+
 ---
 
 ## 1. BÀI TOÁN & BẢN CHẤT NGHIỆP VỤ: "THỨC ĂN CỦA AGENT"
@@ -255,3 +257,18 @@ Các API của dashboard:
 Bằng chứng self-healing được lưu trong `data/results/self_healing_events.jsonl`, `data/results/self_healing_latest.json`, `data/quality/pre_repair_quality_report.json` và `data/quality/post_repair_quality_report.json`. Metric hoặc GX report chưa được pipeline tạo sẽ hiện là “Waiting for pipeline artifact”.
 
 Ảnh dashboard sau một failure drill thành công: [data/reports/bonus_dashboard_success.png](data/reports/bonus_dashboard_success.png).
+
+### Chạy demo theo đúng bộ artifacts đã nộp
+
+Trong `.env`, dùng `OPENAI_API_KEY` của người chạy, `EMBEDDING_PROVIDER=openai`, `EMBEDDING_MODEL=text-embedding-3-small`. Artifacts đã nộp dùng `LLM_PROVIDER=openai`, `LLM_MODEL=gpt-5.6-luna`. Đặt `REFRESH_SOURCE=false` để phát lại đúng raw snapshot 24 DOI và cùng test set; chỉ chuyển `true` khi muốn lấy một lượt Crossref live mới (khi đó cần build lại index, test set và reports cho corpus mới). Không commit `.env`.
+
+```bash
+uv sync --extra dev
+uv run --extra dev pytest -q
+uv run python script/run_phase1.py
+uv run python script/run_corruption_flow.py
+uv run python script/run_hard_benchmark.py
+uv run python dashboard/app.py
+```
+
+Mở `http://127.0.0.1:8000`, bấm **Run failure drill** một lần để xem chuỗi Detect → Quarantine → Repair → Validate → Publish tự động. Dashboard không có nút sửa tay. Mỗi thành viên vẫn phải tự nộp link repository lên LMS; bản nháp [báo cáo của Quốc Bảo](report/2A202603011_LeNguyenQuocBao.md) cần chính bạn ấy rà soát/xác nhận trước khi nộp.

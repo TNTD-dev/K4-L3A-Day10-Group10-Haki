@@ -23,9 +23,11 @@
 | Cleaning và data model | `src/ingestion/cleaning.py` | `list[PaperRecord]` | Clean CSV/JSON 24 dòng | Hoàn thành |
 | Vector index | `src/retrieval/index.py` | Clean dataframe | Ba ChromaDB collections và embedding manifests | Hoàn thành |
 | Retrieval và QA | `src/retrieval/qa.py`, `src/retrieval/agent.py` | Câu hỏi và vector index | Retrieved documents và câu trả lời theo corpus | Hoàn thành |
-| Synthetic corruption | `src/ingestion/corruption.py` | Baseline clean dataframe | Corrupted dataset 21 dòng và corruption log | Hoàn thành |
+| Synthetic corruption | `src/ingestion/corruption.py` | Baseline clean dataframe | Corrupted dataset 22 dòng và corruption log | Hoàn thành |
 | Idempotent repair | `rebuild_clean_dataframe_from_raw()` | Raw records và run date | Repaired dataset/index 24 dòng | Hoàn thành |
 | Kiểm thử Data/RAG | `tests/test_data_rag.py` | Fixtures và artifacts | 6 test cases cho contract chính | Hoàn thành |
+| Bonus B1: Dashboard realtime | `dashboard/` | Metrics, GX, datasets và audit events | HTML Light Enterprise, SSE và ảnh nghiệm thu | Hoàn thành |
+| Bonus B2: Self-healing | `src/automation/` | Failure drill, raw lineage, quality gate | Quarantine, repair, staging publish/rollback | Hoàn thành |
 
 ### Việc hỗ trợ ngoài phạm vi chính
 
@@ -42,8 +44,8 @@
 | Lấy dữ liệu Crossref live | `fetch_source_records()` | 24 records; raw response được giữ nguyên | Đọc `data/raw/crossref_response.json` và `crossref_records.json` |
 | Chuẩn hóa dữ liệu | `build_clean_dataframe()` | 24 dòng, `paper_id` duy nhất, đủ `text_for_embedding` | Đọc `data/clean/papers_clean.json` |
 | Build baseline index | `LocalEmbeddingIndex.build()` | `papers-baseline`: 24 documents | Kiểm tra Chroma collection count |
-| Tiêm sáu dạng lỗi | `corrupt_clean_dataframe()` | 21 dòng sau corruption và log chi tiết affected IDs | Đọc `data/results/corruption_log.json` |
-| Build corrupted index | `LocalEmbeddingIndex.build()` | `papers-corrupted`: 21 documents | Kiểm tra Chroma collection count |
+| Tiêm sáu dạng lỗi | `corrupt_clean_dataframe()` | 22 dòng sau corruption và log chi tiết affected IDs | Đọc `data/results/corruption_log.json` |
+| Build corrupted index | `LocalEmbeddingIndex.build()` | `papers-corrupted`: 22 documents | Kiểm tra Chroma collection count |
 | Repair từ raw | `rebuild_clean_dataframe_from_raw()` | 24 dòng repaired, khớp baseline | So sánh clean và repaired JSON |
 | Build repaired index | `LocalEmbeddingIndex.build()` | `papers-repaired`: 24 documents | Kiểm tra Chroma collection count |
 | Semantic retrieval | `LocalEmbeddingIndex.search()` | Trả về top-k paper IDs, nội dung và metadata | Smoke query `agentic retrieval augmented generation` |
@@ -54,9 +56,9 @@ Output cụ thể của phần việc là chuỗi artifacts có lineage đầy �
 Crossref live response (24 items)
   -> parsed raw records (24)
   -> baseline clean dataset (24)
-  -> corrupted dataset (21)
+  -> corrupted dataset (22)
   -> repaired dataset (24, khớp baseline)
-  -> Chroma collections: baseline 24, corrupted 21, repaired 24
+  -> Chroma collections: baseline 24, corrupted 22, repaired 24
 ```
 
 Các commit chính: `b118b7a`, `e7dc37f`, `f53a997`, `84a2071`, `3ba073e`, `0a4b81f`, `4413c69` và merge commit `c80e0e4`.
@@ -106,7 +108,7 @@ Smoke test live đã xác minh:
 - Crossref trả 24 records và clean dataframe có 24 dòng.
 - `text-embedding-3-small` build được Chroma index.
 - Semantic search trả top result theo query thử nghiệm.
-- Ba collection có số lượng lần lượt 24, 21 và 24 documents.
+- Ba collection có số lượng lần lượt 24, 22 và 24 documents.
 - Repaired dataframe bằng baseline dataframe trên cùng raw source và run date.
 
 ## 5. Một quyết định kỹ thuật quan trọng
@@ -141,21 +143,22 @@ Smoke test live đã xác minh:
 
 | Metric/signal | Baseline | Corrupted | Repaired | Nhận xét cá nhân |
 | --- | ---: | ---: | ---: | --- |
-| `retrieval_hit_rate` | Chờ Evaluation | Chờ Evaluation | Chờ Evaluation | Chưa kết luận trước khi pipeline metrics chạy |
-| `mean_token_f1` | Chờ Evaluation | Chờ Evaluation | Chờ Evaluation | Chưa có artifact metrics |
-| `judge_accuracy` | Chờ Evaluation | Chờ Evaluation | Chờ Evaluation | Chưa có artifact metrics |
-| `mean_judge_score` | Chờ Evaluation | Chờ Evaluation | Chờ Evaluation | Chưa có artifact metrics |
-| Quality checks | Chờ GX | Chờ GX | Chờ GX | Thuộc phần Observability |
-| Freshness status | Chờ GX | Chờ GX | Chờ GX | Thuộc phần Observability |
-| Dataset rows | 24 | 21 | 24 | Repair phục hồi row count và nội dung baseline |
-| Chroma documents | 24 | 21 | 24 | Ba trạng thái được cô lập thành ba collection |
+| `retrieval_hit_rate` | 1.0000 | 0.7000 | 1.0000 | Corruption giảm 0.30; repair phục hồi hoàn toàn |
+| `mean_token_f1` | 1.0000 | 0.3201 | 1.0000 | Câu trả lời sai/nhiễu làm F1 giảm mạnh |
+| `judge_accuracy` | 1.0000 | 0.5000 | 1.0000 | Theo metrics đã commit |
+| `mean_judge_score` | 5.0000 | 3.0000 | 5.0000 | Theo metrics đã commit |
+| GX critical gate | Pass | Fail | Pass | Corruption bị quality gate chặn |
+| Freshness stale ratio | 0% | 31.82% | 0% | Corrupted vượt SLA 25% |
+| Dataset rows | 24 | 22 | 24 | Repair phục hồi row count và nội dung baseline |
+| Chroma documents | 24 | 22 | 24 | Ba trạng thái được cô lập thành ba collection |
 
 ### Kết luận từ số liệu hiện có
 
-1. `drop_latest_records` loại 5/24 records, blank summary tác động 1 record, noise tác động 1 record, title truncation tác động 1 record, stale date tác động 6 records và duplicate rows thêm 2 records. Các thay đổi này đã được ghi bằng affected IDs trong corruption log. Tác động cuối cùng lên retrieval và answer metrics cần được xác nhận bởi Evaluation pipeline.
-2. Repair đọc lại `crossref_records.json`, chạy cùng cleaning contract và rebuild `papers-repaired`. Kết quả repaired có 24 dòng và khớp baseline; tác động lên agent metrics sẽ được kết luận sau khi dùng cùng test set để đánh giá ba trạng thái.
+1. `drop_latest_records` loại 5/24 records; blank summary, noise và title truncation mỗi loại tác động 2 DOI; stale date tác động 7 DOI; duplicate rows thêm 3 dòng. Corrupted còn 22 dòng, Hit Rate giảm 0.30 và Token F1 giảm khoảng 0.68. Đây là tác động tổng hợp của suite, không quy toàn bộ mức giảm cho một lỗi riêng lẻ.
+2. Repair đọc lại `crossref_records.json`, chạy cùng cleaning contract và rebuild `papers-repaired`. Repaired có 24 dòng; data fingerprint, Hit Rate và Token F1 khớp baseline. Quality gate từ Fail trở lại Pass, stale ratio từ 31.82% về 0%.
+3. Bonus self-healing thực hiện tự động phát hiện → cách ly → dựng lại → kiểm định → publish staged index; lượt drill sau merge kết thúc `HEALTHY`. Dashboard dùng SSE hiển thị trạng thái và artifacts theo thời gian thực.
 
-Chưa thể kết luận corruption nào ảnh hưởng retrieval mạnh nhất vì chưa có `baseline_metrics.json`, `corrupted_metrics.json` và `repaired_metrics.json`. Về mặt dữ liệu, `drop_latest_records` có phạm vi lớn nhất đối với document availability, còn `stale_date` tác động nhiều nhất đến freshness signal.
+Test set chuẩn hiện không có câu `categories` vì raw Crossref không cung cấp `subject`; tôi không coi đây là mục đã đạt đủ Guide. Artifact hard benchmark 30 câu được đánh giá riêng để tránh exact-title leakage của bộ 10 câu.
 
 ## 9. Điều học được và hướng cải thiện
 
@@ -179,4 +182,4 @@ Tôi sẽ bổ sung batching và cache cho OpenAI embeddings, cùng retry có ji
 - [x] Báo cáo này không phải bản sao nguyên văn của báo cáo nhóm hoặc báo cáo thành viên khác.
 
 **Họ và tên:** Trần Nguyễn Tiến Đức  
-**Ngày xác nhận:** 2026-09-25
+**Ngày cập nhật sau tích hợp:** 2026-09-25 — cần tự rà soát bản cập nhật trước khi nộp.
