@@ -1,0 +1,308 @@
+{
+  "report_name": "self_healing_pre_ba65a8ddc1c9480cb3adece51d24bfb4",
+  "run_time": "2026-09-25T10:07:47.343359+00:00",
+  "engine": "great_expectations 1.18.0",
+  "success": false,
+  "gx_suite_success": false,
+  "row_count": 22,
+  "unique_papers": 19,
+  "data_fingerprint": "f53d756bec280e51",
+  "evaluated_expectations": 18,
+  "failed_expectations": [
+    "expect_column_values_to_be_unique(paper_id)",
+    "expect_column_value_lengths_to_be_between(title)",
+    "expect_column_value_lengths_to_be_between(summary)"
+  ],
+  "warnings": [
+    "expect_column_value_lengths_to_be_between(categories_joined)",
+    "expect_column_values_to_be_between(age_days)"
+  ],
+  "results": [
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "paper_id",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "column": "paper_id",
+      "severity": "critical",
+      "pillar": "completeness",
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_values_to_be_unique",
+      "column": "paper_id",
+      "severity": "critical",
+      "pillar": "uniqueness",
+      "kwargs": {
+        "column": "paper_id"
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 6,
+      "unexpected_percent": 27.27272727272727,
+      "sample_unexpected": [
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.47576/2949-1894.2026.7.7.023",
+        "10.52060/juptik.v4i1.4318",
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.47576/2949-1894.2026.7.7.023"
+      ]
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "title",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "title"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "column": "title",
+      "severity": "critical",
+      "pillar": "completeness",
+      "kwargs": {
+        "column": "title"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "column": "title",
+      "severity": "critical",
+      "pillar": "distribution",
+      "kwargs": {
+        "column": "title",
+        "min_value": 8
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 2,
+      "unexpected_percent": 9.090909090909092,
+      "sample_unexpected": [
+        "Micros",
+        "SafeRA"
+      ]
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "summary",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "summary"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "column": "summary",
+      "severity": "critical",
+      "pillar": "distribution",
+      "kwargs": {
+        "column": "summary",
+        "min_value": 30
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 2,
+      "unexpected_percent": 9.090909090909092,
+      "sample_unexpected": [
+        "",
+        ""
+      ]
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "authors_joined",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "authors_joined"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "column": "authors_joined",
+      "severity": "warning",
+      "pillar": "completeness",
+      "kwargs": {
+        "column": "authors_joined",
+        "mostly": 0.8,
+        "min_value": 1
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "categories_joined",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "categories_joined"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_value_lengths_to_be_between",
+      "column": "categories_joined",
+      "severity": "warning",
+      "pillar": "completeness",
+      "kwargs": {
+        "column": "categories_joined",
+        "mostly": 0.8,
+        "min_value": 1
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 22,
+      "unexpected_percent": 100.0,
+      "sample_unexpected": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "published",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "published"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "age_days",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "age_days"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_values_to_be_between",
+      "column": "age_days",
+      "severity": "warning",
+      "pillar": "freshness",
+      "kwargs": {
+        "column": "age_days",
+        "mostly": 0.75,
+        "min_value": 0.0,
+        "max_value": 180.0
+      },
+      "success": false,
+      "observed_value": null,
+      "unexpected_count": 7,
+      "unexpected_percent": 31.818181818181817,
+      "sample_unexpected": [
+        "467",
+        "442",
+        "395",
+        "449",
+        "394"
+      ]
+    },
+    {
+      "expectation": "expect_column_to_exist",
+      "column": "text_for_embedding",
+      "severity": "critical",
+      "pillar": "schema",
+      "kwargs": {
+        "column": "text_for_embedding"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_column_values_to_not_be_null",
+      "column": "text_for_embedding",
+      "severity": "critical",
+      "pillar": "completeness",
+      "kwargs": {
+        "column": "text_for_embedding"
+      },
+      "success": true,
+      "observed_value": null,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    },
+    {
+      "expectation": "expect_table_row_count_to_be_between",
+      "column": null,
+      "severity": "critical",
+      "pillar": "volume",
+      "kwargs": {
+        "min_value": 5,
+        "max_value": 5000
+      },
+      "success": true,
+      "observed_value": 22,
+      "unexpected_count": 0,
+      "unexpected_percent": 0.0,
+      "sample_unexpected": []
+    }
+  ]
+}
