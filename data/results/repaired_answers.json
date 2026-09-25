@@ -25,7 +25,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, accurately reproducing the provided summary."
+      "reasoning": "The model answer exactly matches the reference answer, providing the stated abstract summary."
     }
   },
   {
@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, accurately summarizing the paper\u2019s abstract and key requirements for substation civil engineering preliminary design documents."
+      "reasoning": "The model answer exactly matches the reference answer, accurately providing the requested summary."
     }
   },
   {
@@ -141,7 +141,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer and accurately states the paper\u2019s summary point."
+      "reasoning": "The model answer exactly matches the reference answer and directly provides the requested summary statement."
     }
   },
   {
@@ -170,7 +170,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, naming both authors correctly."
+      "reasoning": "The model answer exactly matches the reference answer, listing both authors correctly."
     }
   },
   {
@@ -228,7 +228,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference authors: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
+      "reasoning": "The model answer exactly matches the reference answer, listing Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye as the authors."
     }
   },
   {
@@ -257,7 +257,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "Model answer exactly matches the reference answer and accurately states the paper\u2019s summary."
+      "reasoning": "The model answer exactly matches the reference answer and accurately states the paper's summary."
     }
   },
   {

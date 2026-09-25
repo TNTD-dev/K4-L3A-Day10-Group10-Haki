@@ -5,7 +5,7 @@
 
 ## 1. Checklist
 
-### A. Code (xây trên dữ liệu giả)
+### A. Code
 - [x] `observability/quality.py` — GX 1.x ephemeral (`get_context` → `add_pandas` → `add_dataframe_asset` → `add_batch_definition_whole_dataframe`)
   - [x] 4 expectation bắt buộc: RowCount 5–5000, NotNull (`paper_id,title,text_for_embedding`), Unique `paper_id`, `summary` len ≥ 30
   - [x] Thêm: schema contract, volume vs baseline, `title` len ≥ 8, freshness `age_days` (warning), `data_fingerprint`, `enforce_quality_gate`
@@ -16,13 +16,11 @@
 - [x] `pipelines/corruption_flow.py` — corrupt → gate → eval → **auto-repair (B2)** → gate → eval → report → dashboard
 - [x] `observability/reporting.py` — phase1 report + bảng 3 trạng thái + detection matrix + verdict
 - [x] `observability/dashboard.py` — HTML tĩnh, không thêm dependency (**B1**)
-- [x] `observability/fake_data.py` + `script/run_observability_fake.py` — data giả + evaluator proxy
-- [x] `tests/test_observability.py` — 14 test, pass (một phần B3)
+- [x] `tests/test_observability.py` — 15 test trên raw snapshot thật, pass (một phần B3)
 
 ### B. Kiểm chứng (sau khi cài env)
-- [x] `python -m pytest tests -q` → 14 passed
-- [x] `python script/run_observability_fake.py` → mở `.fake/data/reports/dashboard.html`
-- [ ] Soát `corruption_report.md` giả: đủ 3 cột, silent failure = `inject_noise`, `drop_latest_records`
+- [x] `python -m pytest tests -q` → 21 passed (15 Obs + 6 RAG)
+- [x] Soát `corruption_report.md`: đủ 3 cột, silent failure = `inject_noise`
 
 ### C. Merge với RAG
 - [ ] Người RAG xác nhận clean df có đủ `REQUIRED_COLUMNS` (xem mục 2)
@@ -44,7 +42,7 @@
 
 - **Gate:** `report["success"]` = mọi expectation critical pass. `enforce_quality_gate()` raise `DataQualityError` và được gọi **trước khi index** ở production path (repair; phase1 phía RAG cũng nên gọi).
 - **Audit mode:** nhánh corrupted cố ý không enforce, vẫn index để *đo* silent failure. Đây là thí nghiệm, không phải production.
-- **Kết quả trên data giả:** 5/6 lỗi bị phát hiện ở tầng dữ liệu; `inject_noise` là silent, chỉ lộ qua Token F1, dùng làm luận điểm cho lớp giám sát thứ hai.
+- **Kết quả chạy thật:** 5/6 lỗi bị phát hiện ở tầng dữ liệu; `inject_noise` là silent, chỉ lộ qua Token F1, dùng làm luận điểm cho lớp giám sát thứ hai.
 
 ## 2. Merge contract (RAG ↔ Observability)
 
@@ -95,7 +93,7 @@ Mẹo sân khấu: chạy trước 1 lần để có sẵn artifact; khi demo ch
 **Mục tiêu:** trong 5 giây người xem trả lời được: *dữ liệu có đang ổn không? lỗi nào bị bắt? đã hồi phục chưa?*
 
 Bố cục từ trên xuống (theo thứ tự câu hỏi người xem sẽ đặt):
-1. **Banner kết luận**: xanh "đã phục hồi" / đỏ "chưa khớp"; vàng "FAKE DATA" khi chạy data giả.
+1. **Banner kết luận**: xanh "đã phục hồi" / đỏ "chưa khớp".
 2. **Dải trạng thái 3 bước** Baseline → Corrupted → Repaired: mỗi ô có pill GX PASS/FAIL và FRESH/STALE, viền màu theo trạng thái.
 3. **KPI cards** (Hit Rate, F1, Judge Acc, Judge Score): 3 giá trị cạnh nhau, delta đỏ khi giảm.
 4. **Grouped bar chart** (SVG inline): so sánh 3 trạng thái trên cùng thang 0–1.

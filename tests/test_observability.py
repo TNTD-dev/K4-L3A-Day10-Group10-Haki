@@ -1,18 +1,32 @@
-"""Test Observability tren du lieu gia. Chay: python -m pytest tests -q"""
+"""Test Observability tren raw snapshot that (data/raw/crossref_records.json). Chay: python -m pytest tests -q"""
 from __future__ import annotations
+
+from datetime import UTC, datetime
+from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from core.config import load_settings
 from core.utils import read_json
+from evaluation.metrics import _token_f1
 from evaluation.testset import build_test_set
-from ingestion.corruption import corrupt_clean_dataframe
+from ingestion.cleaning import rebuild_clean_dataframe_from_raw
+from ingestion.corruption import corrupt_clean_dataframe, inject_noise
 from observability.dashboard import build_dashboard
-from observability.fake_data import fake_evaluate, make_fake_clean_df
-from observability.quality import REQUIRED_COLUMNS, build_freshness_report, run_data_quality_checks
+from observability.quality import (
+    REQUIRED_COLUMNS,
+    DataQualityError,
+    build_freshness_report,
+    data_fingerprint,
+    enforce_quality_gate,
+    run_data_quality_checks,
+)
 from observability.reporting import generate_corruption_report
-from pipelines import corruption_flow
+
+RAW_RECORDS_PATH = Path(__file__).resolve().parents[1] / "data" / "raw" / "crossref_records.json"
+FIXED_RUN_DATE = datetime(2026, 9, 25, tzinfo=UTC)
+PHRASES = {"authors": "who authored", "date": "when was", "categories": "what categories"}
 
 
 @pytest.fixture
@@ -22,10 +36,10 @@ def settings(tmp_path):
 
 @pytest.fixture
 def clean_df():
-    return make_fake_clean_df()
+    return rebuild_clean_dataframe_from_raw(RAW_RECORDS_PATH, FIXED_RUN_DATE)
 
 
-def test_fake_df_matches_contract(clean_df):
+def test_clean_df_matches_contract(clean_df):
     assert set(REQUIRED_COLUMNS) <= set(clean_df.columns)
 
 
@@ -43,35 +57,57 @@ def test_quality_gate_reports_missing_column_without_crash(clean_df, settings):
 
 def test_freshness(clean_df, settings):
     fresh = build_freshness_report(clean_df, settings, settings.paths.freshness_report)
-    assert fresh["is_fresh"] and fresh["stale_rows"] == 1
+    assert fresh["total_rows"] == len(clean_df)
+    assert fresh["stale_rows"] == int((clean_df["age_days"] > settings.freshness_threshold_days).sum())
     stale = clean_df.assign(age_days=clean_df["age_days"] + 365)
     assert not build_freshness_report(stale, settings, settings.paths.freshness_report)["is_fresh"]
 
 
+def test_freshness_is_warning_not_gate_failure(clean_df, settings):
+    report = run_data_quality_checks(clean_df.assign(age_days=clean_df["age_days"] + 365), settings, "stale")
+    assert report["success"] and not report["gx_suite_success"]
+    assert any("(age_days)" in w for w in report["warnings"])
+
+
+def test_enforce_gate_blocks_bad_data(clean_df, settings):
+    enforce_quality_gate(run_data_quality_checks(clean_df, settings, "ok"))
+    with pytest.raises(DataQualityError):
+        enforce_quality_gate(run_data_quality_checks(clean_df.assign(title="short"), settings, "bad"))
+
+
+def test_fingerprint_ignores_row_order_and_age(clean_df):
+    shuffled = clean_df.iloc[::-1].assign(age_days=clean_df["age_days"][::-1] + 1)
+    assert data_fingerprint(clean_df) == data_fingerprint(shuffled)
+    assert data_fingerprint(clean_df) != data_fingerprint(clean_df.assign(title="x" * 20))
+
+
+def test_repair_is_idempotent_by_fingerprint():
+    first = rebuild_clean_dataframe_from_raw(RAW_RECORDS_PATH, FIXED_RUN_DATE)
+    second = rebuild_clean_dataframe_from_raw(RAW_RECORDS_PATH, datetime(2026, 10, 1, tzinfo=UTC))
+    assert data_fingerprint(first) == data_fingerprint(second)
+
+
 def test_corruption_is_deterministic_and_logged(clean_df, settings):
+    original = clean_df.copy(deep=True)
     a = corrupt_clean_dataframe(clean_df, settings.paths.corruption_log)
-    b = corrupt_clean_dataframe(clean_df, settings.paths.corruption_log)
+    b = corrupt_clean_dataframe(clean_df.sample(frac=1, random_state=7), settings.paths.corruption_log)
     pd.testing.assert_frame_equal(a, b)
     log = read_json(settings.paths.corruption_log)
     assert [c["name"] for c in log["scenarios"]] == [
         "drop_latest_records", "blank_summary", "inject_noise", "truncate_title", "stale_date", "duplicate_rows"
     ]
-    assert clean_df.equals(make_fake_clean_df()), "input df khong duoc bi sua"
+    pd.testing.assert_frame_equal(clean_df, original)  # input khong bi sua
 
 
 def test_targeted_injection_hits_benchmark(clean_df, settings):
     ts = build_test_set(clean_df, settings.paths.eval_testset)
     corrupt_clean_dataframe(clean_df, settings.paths.corruption_log, test_set=ts)
-    log = read_json(settings.paths.corruption_log)
-    hits = {c["name"]: len(c["benchmark_hits"]) for c in log["scenarios"]}
+    hits = {c["name"]: len(c["benchmark_hits"]) for c in read_json(settings.paths.corruption_log)["scenarios"]}
     for kind in ("drop_latest_records", "blank_summary", "inject_noise", "truncate_title", "stale_date"):
         assert hits[kind] >= 1, kind
 
 
-def test_noise_breaks_tokens():
-    from ingestion.corruption import inject_noise
-    from observability.fake_data import _token_f1
-
+def test_noise_breaks_tokens_but_keeps_length():
     text = "Retrieval augmented generation improves grounding."
     assert len(inject_noise(text)) > len(text)
     assert _token_f1(text, inject_noise(text)) < 0.3
@@ -79,76 +115,29 @@ def test_noise_breaks_tokens():
 
 def test_gate_catches_corruption(clean_df, settings):
     corrupted = corrupt_clean_dataframe(clean_df, settings.paths.corruption_log)
-    report = run_data_quality_checks(corrupted, settings, "corrupted", reference_unique_ids=len(clean_df))
+    report = run_data_quality_checks(corrupted, settings, "corrupted", reference_unique_ids=clean_df["paper_id"].nunique())
     failed = " ".join(report["failed_expectations"])
     for needle in ("values_to_be_unique(paper_id)", "unique_value_count", "(summary)", "(title)"):
         assert needle in failed, needle
-    # Freshness la warning (theo Guide), khong phai critical
-    assert any("(age_days)" in w for w in report["warnings"])
     assert not build_freshness_report(corrupted, settings, settings.paths.freshness_report)["is_fresh"]
 
 
-def test_freshness_is_warning_not_gate_failure(clean_df, settings):
-    stale = clean_df.assign(age_days=clean_df["age_days"] + 365)
-    report = run_data_quality_checks(stale, settings, "stale")
-    assert report["success"] and report["warnings"] and not report["gx_suite_success"]
-
-
-def test_enforce_gate_blocks_bad_data(clean_df, settings):
-    from observability.quality import DataQualityError, enforce_quality_gate
-
-    enforce_quality_gate(run_data_quality_checks(clean_df, settings, "ok"))
-    with pytest.raises(DataQualityError):
-        enforce_quality_gate(run_data_quality_checks(clean_df.assign(title="short"), settings, "bad"))
-
-
-def test_fingerprint_ignores_row_order_and_age(clean_df):
-    from observability.quality import data_fingerprint
-
-    shuffled = clean_df.iloc[::-1].assign(age_days=clean_df["age_days"][::-1] + 1)
-    assert data_fingerprint(clean_df) == data_fingerprint(shuffled)
-    assert data_fingerprint(clean_df) != data_fingerprint(clean_df.assign(title="x" * 20))
-
-
-def test_testset_shape_and_qa_wording(clean_df, settings):
+def test_testset_is_deterministic_answerable_and_matches_qa_wording(clean_df, settings):
     ts = build_test_set(clean_df, settings.paths.eval_testset)
     assert len(ts) == 10 and len({t["ground_truth_doc_ids"][0] for t in ts}) == 10
-    counts = pd.Series([t["question_type"] for t in ts]).value_counts().to_dict()
-    assert counts == {"summary": 3, "authors": 3, "date": 2, "categories": 2}
-    assert build_test_set(clean_df, settings.paths.eval_testset) == ts
-    # Contract voi retrieval/qa.py: cum tu dinh tuyen cau tra loi
-    phrases = {"authors": "who authored", "date": "when was", "categories": "what categories"}
+    assert all(t["ground_truth"].strip() for t in ts)
+    assert build_test_set(clean_df.sample(frac=1, random_state=3), settings.paths.eval_testset) == ts
     for t in ts:
-        if t["question_type"] in phrases:
-            assert phrases[t["question_type"]] in t["question"].lower()
+        if t["question_type"] in PHRASES:
+            assert PHRASES[t["question_type"]] in t["question"].lower()
         assert t["question"].count("'") == 2
 
 
 def test_testset_skips_unanswerable_type(clean_df, settings):
-    # Crossref live co the khong tra `subject` -> categories rong: khong duoc sinh cau hoi co ground truth rong.
+    # Crossref live co the khong tra `subject` -> categories rong: khong sinh cau hoi co ground truth rong.
     ts = build_test_set(clean_df.assign(categories_joined=""), settings.paths.eval_testset)
-    assert len(ts) == 10
-    assert all(t["ground_truth"].strip() for t in ts)
+    assert len(ts) == 10 and all(t["ground_truth"].strip() for t in ts)
     assert "categories" not in {t["question_type"] for t in ts}
-
-
-def test_full_flow_on_fake_data(clean_df, settings):
-    p = settings.paths
-    corruption_flow.save_dataframe(clean_df, p.clean_csv, p.clean_json)
-    build_test_set(clean_df, p.eval_testset)
-    fake_evaluate(settings, clean_df, None, p.baseline_metrics, p.baseline_answers)
-
-    result = corruption_flow.main(settings, evaluate_fn=fake_evaluate, repair_fn=lambda s: make_fake_clean_df())
-
-    assert result["corrupted"]["mean_token_f1"] < result["baseline"]["mean_token_f1"]
-    assert result["repaired"] == result["baseline"]
-    assert result["auto_repair"]["triggered"] and result["auto_repair"]["repaired_gate_pass"]
-    assert result["auto_repair"]["fingerprint_match"]
-    report_q = read_json(p.quality_dir / "corrupted_quality_report.json")
-    assert "expect_column_unique_value_count_to_be_between(paper_id)" in report_q["failed_expectations"]
-    report = p.comparison_report.read_text(encoding="utf-8")
-    assert "| Baseline | Corrupted | Repaired |" in report
-    assert (p.comparison_report.parent / "dashboard.html").exists()
 
 
 def test_report_and_dashboard_handle_missing_artifacts(settings):

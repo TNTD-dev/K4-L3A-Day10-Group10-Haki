@@ -22,7 +22,7 @@
 - [ ] **Live API ≠ snapshot:** `source_filter` lấy 180 ngày gần nhất → dữ liệu live khác 24 bài mẫu. Mặc định **đọc snapshot**, chỉ gọi API khi `REFRESH_SOURCE=1`; lỗi mạng/429 → fallback snapshot.
 - [ ] **Không ghi đè `crossref_response.json` bằng response lỗi/rỗng** (mất lineage).
 - [ ] **Thứ tự signal CP1:** lệnh check GX đọc `clean_json` → phải chạy clean + ghi file trước.
-- [x] `.gitignore` đã chặn `.env` ✅ (thêm `.fake/` cho output dữ liệu giả).
+- [x] `.gitignore` đã chặn `.env` ✅.
 - [ ] Corruption phải **tất định** (seed / chọn theo index) → report lặp lại được.
 - [ ] GX 1.x: chỉ dùng `gx.get_context(mode="ephemeral")` + `data_sources.add_pandas` (cú pháp cũ −10đ).
 
@@ -98,4 +98,4 @@ corruption.py (chỉ cần schema clean df) ────────────
 reporting.py (chỉ cần dict metrics/quality) ── làm song song từ đầu
 ```
 
-Song song ngay từ phút 0: M2 `crossref`+`cleaning`, M4 `reporting`+`quality` (test bằng df giả), M1 khung `phase1`, M3 verify retrieval với mock.
+Song song ngay từ phút 0: M2 `crossref`+`cleaning`, M4 `reporting`+`quality`, M1 khung `phase1`, M3 verify retrieval với mock.

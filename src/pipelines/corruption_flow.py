@@ -70,7 +70,7 @@ def sanity_check(baseline: dict, corrupted: dict, repaired: dict) -> list[str]:
 def main(settings: Settings | None = None, evaluate_fn=evaluate, repair_fn=repair_from_raw) -> dict:
     """Corruption -> Quality Gate -> evaluate -> (auto) repair -> evaluate -> compare.
 
-    `evaluate_fn` / `repair_fn` inject duoc de test observability tren data gia truoc khi merge RAG.
+    `evaluate_fn` / `repair_fn` inject duoc (test / ablation) ma khong can sua flow.
     """
     settings = settings or load_settings()
     paths = settings.paths

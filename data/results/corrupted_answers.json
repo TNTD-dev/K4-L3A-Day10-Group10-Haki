@@ -25,7 +25,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer does not summarize the paper\u2019s focus on privacy-preserving digital investigation readiness assessment. It instead discusses generic RAG bottlenecks\u2014latency and computation cost\u2014which is unrelated to the reference answer."
+      "reasoning": "The model answer is materially incorrect and unrelated to the paper's stated focus on privacy-preserving digital investigation readiness assessment. It instead discusses RAG inference latency and computation cost."
     }
   },
   {
@@ -54,7 +54,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer lists Audrey Rah and Sven Hahues, but the reference identifies Sathiska Priyad and Gayathri Karthick as the authors."
+      "reasoning": "The model answer lists Audrey Rah and Sven Hahues, but the paper was authored by Sathiska Priyad and Gayathri Karthick."
     }
   },
   {
@@ -83,7 +83,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer gives 2025-04-06, but the reference answer states that the paper was published on 2026-09-04. The dates differ by more than a year, so the answer is materially incorrect."
+      "reasoning": "The model answer gives 2025-04-06, while the reference answer states the paper was published on 2026-09-04. The dates differ substantially, so the answer is incorrect."
     }
   },
   {
@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer matches the reference answer in substance and wording. The inserted '~#' characters are formatting artifacts but do not alter the meaning."
+      "reasoning": "The model answer conveys the same content as the reference answer, with only extraneous tilde/hash characters inserted within words. The meaning remains fully intact."
     }
   },
   {
@@ -141,7 +141,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer is empty and does not provide any summary of the paper, so it fails to address the question or convey the reference answer's key point."
+      "reasoning": "The model answer is empty and does not provide any summary of the paper or address the reference answer's key point about challenges deploying LLMs for low-resource languages."
     }
   },
   {
@@ -199,7 +199,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer gives 2025-07-02, but the reference answer states the paper was published on 2026-07-02. The year is incorrect."
+      "reasoning": "The model answer gives 2025-07-02, but the reference answer is 2026-07-02. The year is incorrect, so the answer is materially wrong."
     }
   },
   {
@@ -228,7 +228,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, listing Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye as the authors."
+      "reasoning": "The model answer exactly matches the reference answer, including all three authors: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
     }
   },
   {
@@ -257,7 +257,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer conveys the same meaning as the reference answer: fragmented access to MUI digital fatwa documents makes information retrieval less effective. The added symbols appear to be formatting artifacts and do not materially change the content."
+      "reasoning": "The model answer conveys the same meaning as the reference answer: fragmented access to MUI digital fatwa documents makes information retrieval less effective. The inserted tilde/hash characters appear to be formatting artifacts and do not materially alter the content."
     }
   },
   {
@@ -286,7 +286,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, including all seven authors in the correct order."
+      "reasoning": "The model answer exactly matches the reference answer, listing all seven authors in the same order."
     }
   }
 ]

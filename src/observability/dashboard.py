@@ -162,7 +162,7 @@ CSS = """
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
 main{max-width:1100px;margin:0 auto;padding:24px 16px}h1{margin:0 0 4px;font-size:22px}h3{margin:0 0 12px;font-size:15px}h4{margin:0 0 8px;font-size:14px}
 .sub{color:var(--muted);margin-bottom:20px}.banner{padding:12px 16px;border-radius:10px;margin-bottom:16px;font-weight:600}
-.banner.ok{background:color-mix(in srgb,var(--ok) 15%,transparent)}.banner.bad{background:color-mix(in srgb,var(--bad) 15%,transparent)}.banner.fake{background:color-mix(in srgb,#e0a800 20%,transparent)}
+.banner.ok{background:color-mix(in srgb,var(--ok) 15%,transparent)}.banner.bad{background:color-mix(in srgb,var(--bad) 15%,transparent)}
 .flow{display:flex;gap:8px;align-items:stretch;margin-bottom:16px;flex-wrap:wrap}.arrow{align-self:center;color:var(--muted);font-size:20px}
 .step{flex:1;min-width:180px;background:var(--card);border:1px solid var(--line);border-top:4px solid;border-radius:10px;padding:12px}
 .step.baseline{border-top-color:var(--base)}.step.corrupted{border-top-color:var(--corr)}.step.repaired{border-top-color:var(--rep)}.step-title{font-weight:700;margin-bottom:6px}
@@ -185,7 +185,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:6px 8px;
 """
 
 
-def render_dashboard(artifacts: dict[str, Any], fake: bool = False) -> str:
+def render_dashboard(artifacts: dict[str, Any]) -> str:
     m = artifacts["metrics"]
     q = artifacts["quality"]
     if m["baseline"] and m["repaired"]:
@@ -194,8 +194,6 @@ def render_dashboard(artifacts: dict[str, Any], fake: bool = False) -> str:
                  f'{" · Quality Gate đã chặn dữ liệu corrupted" if q["corrupted"] and not q["corrupted"]["success"] else ""}</div>'
     else:
         banner = '<div class="banner bad">Chưa đủ artifacts — chạy run_phase1.py và run_corruption_flow.py</div>'
-    if fake:
-        banner = '<div class="banner fake">⚠️ FAKE DATA DEMO — metrics RAG là giá trị mô phỏng, không dùng để nộp bài</div>' + banner
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Data Observability Dashboard</title><style>{CSS}</style></head><body><main>
 <h1>Data Observability — RAG Pipeline</h1><div class="sub">Crossref papers · GX 1.x Quality Gate · Freshness SLA · Generated {now_utc():%Y-%m-%d %H:%M} UTC</div>
@@ -203,7 +201,7 @@ def render_dashboard(artifacts: dict[str, Any], fake: bool = False) -> str:
 </main></body></html>"""
 
 
-def build_dashboard(settings: Settings, fake: bool = False) -> Path:
+def build_dashboard(settings: Settings) -> Path:
     out = settings.paths.comparison_report.parent / "dashboard.html"
-    write_text(out, render_dashboard(collect_artifacts(settings), fake=fake))
+    write_text(out, render_dashboard(collect_artifacts(settings)))
     return out

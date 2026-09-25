@@ -1,6 +1,6 @@
 # Corruption & Repair Report — Baseline vs Corrupted vs Repaired
 
-_Generated: 2026-09-25T08:35:35.132381+00:00_
+_Generated: 2026-09-25T08:55:57.951788+00:00_
 
 ## 1. RAG Metrics (3 trạng thái)
 

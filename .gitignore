@@ -6,5 +6,4 @@ src/*.egg-info/
 lab/
 **/__pycache__/
 doc_verification_report.md
-.fake/
 .pytest_cache/
