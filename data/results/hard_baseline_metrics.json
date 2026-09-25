@@ -1,0 +1,36 @@
+{
+  "samples": 30,
+  "answerable": 24,
+  "hit_at_1": 0.7916666666666666,
+  "hit_at_4": 0.9583333333333334,
+  "mrr": 0.8472222222222222,
+  "judge_accuracy": 0.9583333333333334,
+  "judge_accuracy_ci95": [
+    0.798,
+    0.993
+  ],
+  "mean_judge_score": 4.75,
+  "wrong_abstentions": 0,
+  "confident_wrong_rate": 0.041666666666666664,
+  "unanswerable": 6,
+  "abstention_rate": 1.0,
+  "hallucination_rate": 0.0,
+  "judge_fallbacks": 0,
+  "by_type": {
+    "summary": {
+      "n": 8,
+      "hit_at_1": 0.875,
+      "judge_accuracy": 1
+    },
+    "authors": {
+      "n": 8,
+      "hit_at_1": 0.75,
+      "judge_accuracy": 0.875
+    },
+    "date": {
+      "n": 8,
+      "hit_at_1": 0.75,
+      "judge_accuracy": 1
+    }
+  }
+}
