@@ -224,3 +224,34 @@ GOOGLE_API_KEY=your_gemini_api_key_here
   > GitHub chỉ ghi nhận đóng góp khi commit được push trực tiếp vào **nhánh mặc định (`main`)**.  
   > Trước khi nộp bài, mở trình duyệt vào repo nhóm, chọn tab **Insights > Contributors**. Bắt buộc mọi thành viên trong nhóm đều phải xuất hiện trên biểu đồ commit thì mới được tính điểm chuyên cần nhóm!
 - [ ] **Nộp bài lên VLearn LMS:** Mỗi thành viên copy đường link repository GitHub của nhóm và nộp lên cổng LMS trước khi đồng hồ đếm ngược kết thúc 240 phút!
+
+---
+
+## 7. BONUS B1 + B2: HAKI DATA CONTROL CENTER
+
+Dashboard theo dõi quality, freshness, phân bố tuổi paper, trạng thái ba collection và audit timeline. SSE cập nhật khi pipeline phát sinh event hoặc artifact thay đổi. Bấm **Run failure drill** để tiêm corruption; quality gate phát hiện và tự repair từ raw snapshot, sau đó xác nhận dữ liệu trước khi promote collection `papers-repaired`.
+
+Khởi động dashboard bằng:
+
+```bash
+uv sync
+uv run python dashboard/app.py
+```
+
+Mặc định dashboard chỉ bind vào `127.0.0.1:8000`. Dùng `--host 0.0.0.0` nếu cần mở trong mạng LAN; có thể truyền `--port` và `--repair-source auto|snapshot|live`. Trang dùng Tabler và Apache ECharts từ CDN; khi CDN không truy cập được, dữ liệu, bảng và timeline vẫn hiển thị.
+
+Chạy self-healing trực tiếp từ terminal:
+
+```bash
+uv run python script/run_self_healing.py --repair-source auto
+```
+
+Các API của dashboard:
+
+- `GET /api/dashboard/snapshot` trả về health, quality/freshness, dataset counts, metrics và artifacts.
+- `GET /api/dashboard/events` phát audit events dưới dạng Server-Sent Events.
+- `POST /api/failure-drill` khởi chạy drill và trả HTTP 409 nếu một lần chạy khác đang hoạt động.
+
+Bằng chứng self-healing được lưu trong `data/results/self_healing_events.jsonl`, `data/results/self_healing_latest.json`, `data/quality/pre_repair_quality_report.json` và `data/quality/post_repair_quality_report.json`. Metric hoặc GX report chưa được pipeline tạo sẽ hiện là “Waiting for pipeline artifact”.
+
+Ảnh dashboard sau một failure drill thành công: [data/reports/bonus_dashboard_success.png](data/reports/bonus_dashboard_success.png).

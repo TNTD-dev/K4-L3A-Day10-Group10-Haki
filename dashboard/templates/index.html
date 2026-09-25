@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f8fc" />
+    <title>HAKI Data Control Center</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" />
+    <link rel="stylesheet" href="/static/app.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-rail" aria-label="Primary navigation">
+        <a class="brand-mark" href="#overview" aria-label="HAKI Data Control Center">
+          <span class="brand-glyph">H</span>
+          <span class="brand-wordmark">HAKI<span>DATA OPS</span></span>
+        </a>
+        <div class="rail-divider"></div>
+        <div class="rail-label">WORKSPACE</div>
+        <a class="rail-link active" href="#overview"><span class="rail-icon">▦</span><span>Overview</span></a>
+        <a class="rail-link" href="#quality"><span class="rail-icon">◈</span><span>Quality & drift</span></a>
+        <a class="rail-link" href="#healing"><span class="rail-icon">⟳</span><span>Self-healing</span></a>
+        <a class="rail-link" href="#evidence"><span class="rail-icon">▤</span><span>Evidence</span></a>
+        <div class="rail-spacer"></div>
+        <div class="rail-project">
+          <span class="project-dot"></span>
+          <span><b>Day 10 · Group 10</b><small>RAG data pipeline</small></span>
+        </div>
+        <div class="rail-footer">LOCAL WORKSPACE<br /><span>v1.0 · Read only except drill</span></div>
+      </aside>
+
+      <main class="main-area" id="overview">
+        <header class="topbar">
+          <div class="breadcrumb"><span>HAKI</span><span class="crumb-slash">/</span><b>Data Control Center</b></div>
+          <div class="topbar-actions">
+            <span class="connection-indicator"><i></i><span>Live updates</span></span>
+            <span class="topbar-divider"></span>
+            <span class="updated-at" id="updatedAt">Connecting…</span>
+            <button class="icon-button" id="refreshButton" title="Refresh snapshot" aria-label="Refresh snapshot">↻</button>
+          </div>
+        </header>
+
+        <div class="content-wrap">
+          <section class="page-heading">
+            <div>
+              <div class="eyebrow">DATA RELIABILITY · CROSSREF → CHROMA</div>
+              <h1>Pipeline overview</h1>
+              <p>Quality signals, freshness drift, and automated recovery in one live view.</p>
+            </div>
+            <div class="heading-meta"><span class="env-pill"><i></i> LOCAL ENVIRONMENT</span><span class="date-stamp" id="dateStamp">—</span></div>
+          </section>
+
+          <section class="kpi-grid" aria-label="Pipeline key performance indicators">
+            <article class="kpi-card">
+              <div class="kpi-top"><span>PIPELINE HEALTH</span><span class="kpi-icon icon-health">⌁</span></div>
+              <div class="kpi-value" id="pipelineHealth">Waiting</div>
+              <div class="kpi-foot"><span class="status-dot" id="healthDot"></span><span id="healthDetail">No self-healing run yet</span></div>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top"><span>QUALITY GATE</span><span class="kpi-icon icon-quality">◈</span></div>
+              <div class="kpi-value" id="qualityValue">Waiting</div>
+              <div class="kpi-foot"><span id="qualitySub">Waiting for pipeline artifact</span></div>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top"><span>FRESHNESS SLA</span><span class="kpi-icon icon-freshness">◷</span></div>
+              <div class="kpi-value" id="freshnessValue">—</div>
+              <div class="kpi-foot"><span id="freshnessSub">Waiting for clean dataset</span></div>
+            </article>
+            <article class="kpi-card kpi-card-primary">
+              <div class="kpi-top"><span>ACTIVE INDEX</span><span class="kpi-icon icon-index">▤</span></div>
+              <div class="kpi-value" id="indexedDocuments">—</div>
+              <div class="kpi-foot"><span id="activeIndexName">documents indexed</span></div>
+            </article>
+          </section>
+
+          <section class="chart-grid" id="quality">
+            <article class="panel chart-panel">
+              <div class="panel-heading">
+                <div><div class="panel-kicker">DATA PROFILE</div><h2>Paper age distribution</h2></div>
+                <span class="panel-tag" id="datasetCount">— records</span>
+              </div>
+              <div class="chart-area" id="ageChart"><div class="chart-fallback">Loading chart…</div></div>
+              <div class="chart-legend"><span><i class="legend-blue"></i>Recent</span><span><i class="legend-teal"></i>In SLA</span><span><i class="legend-amber"></i>Stale</span></div>
+            </article>
+            <article class="panel chart-panel drift-panel">
+              <div class="panel-heading">
+                <div><div class="panel-kicker">DRIFT MONITOR</div><h2>Freshness over runs</h2></div>
+                <span class="live-tag"><i></i> REALTIME</span>
+              </div>
+              <div class="chart-area" id="driftChart"><div class="chart-fallback">Waiting for run history</div></div>
+              <div class="chart-note"><span class="line-key before-line"></span><span>Before repair</span><span class="line-key after-line"></span><span>After repair</span><span class="line-key threshold-line"></span><span>Alert threshold 25%</span></div>
+            </article>
+          </section>
+
+          <section class="panel comparison-panel">
+            <div class="panel-heading">
+              <div><div class="panel-kicker">RETRIEVAL LINEAGE</div><h2>Dataset comparison</h2></div>
+              <span class="muted-caption">Same corpus · three pipeline states</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table comparison-table">
+                <thead><tr><th>STATE</th><th>QUALITY</th><th>ROWS</th><th>INDEXED DOCS</th><th>RETRIEVAL METRICS</th></tr></thead>
+                <tbody id="comparisonBody"><tr><td colspan="5" class="empty-row">Waiting for pipeline artifacts</td></tr></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="lower-grid" id="healing">
+            <article class="panel quality-panel">
+              <div class="panel-heading">
+                <div><div class="panel-kicker">QUALITY GATE</div><h2>Expectation checks</h2></div>
+                <span class="status-chip neutral" id="qualityChip">AWAITING DATA</span>
+              </div>
+              <div class="expectation-list" id="expectationList"><div class="waiting-block">Quality checks will appear when a report artifact is available.</div></div>
+              <div class="gx-footer"><span class="gx-mark">GX</span><span>Great Expectations adapter</span><b id="gxStatus">Waiting for pipeline artifact</b></div>
+            </article>
+
+            <article class="panel self-heal-panel">
+              <div class="panel-heading">
+                <div><div class="panel-kicker">AUTOMATED RECOVERY</div><h2>Self-healing pipeline</h2></div>
+                <span class="status-chip neutral" id="stateChip">IDLE</span>
+              </div>
+              <div class="state-flow" id="stateFlow">
+                <div class="state-step" data-state="CORRUPTING"><span>01</span><b>Inject</b></div>
+                <i></i><div class="state-step" data-state="DETECTED"><span>02</span><b>Detect</b></div>
+                <i></i><div class="state-step" data-state="QUARANTINED"><span>03</span><b>Isolate</b></div>
+                <i></i><div class="state-step" data-state="REPAIRING"><span>04</span><b>Repair</b></div>
+                <i></i><div class="state-step" data-state="REVALIDATING"><span>05</span><b>Verify</b></div>
+                <i></i><div class="state-step" data-state="PUBLISHING"><span>06</span><b>Publish</b></div>
+              </div>
+              <div class="run-summary" id="runSummary"><div class="summary-empty">No recovery run in this session.</div></div>
+              <div class="drill-action">
+                <div><b>Run a controlled failure drill</b><span>Inject faults, detect them, and auto-repair from raw lineage.</span></div>
+                <button class="btn btn-primary drill-button" id="drillButton"><span>▶</span> Run failure drill</button>
+              </div>
+              <div class="drill-feedback" id="drillFeedback" role="status"></div>
+            </article>
+          </section>
+
+          <section class="lower-grid evidence-grid" id="evidence">
+            <article class="panel timeline-panel">
+              <div class="panel-heading"><div><div class="panel-kicker">AUDIT TRAIL</div><h2>Live event timeline</h2></div><span class="panel-tag" id="eventCount">0 events</span></div>
+              <div class="timeline" id="eventTimeline"><div class="waiting-block">Events will stream here as the pipeline runs.</div></div>
+            </article>
+            <article class="panel affected-panel">
+              <div class="panel-heading"><div><div class="panel-kicker">QUARANTINE DETAIL</div><h2>Affected paper IDs</h2></div><span class="panel-tag" id="affectedCount">0 IDs</span></div>
+              <div class="affected-list" id="affectedList"><div class="waiting-block">No affected records in the latest run.</div></div>
+              <div class="affected-footer"><span>Source: corruption_log.json</span><span id="repairSource">Repair source · —</span></div>
+            </article>
+          </section>
+
+          <section class="panel artifacts-panel">
+            <div class="panel-heading"><div><div class="panel-kicker">REPRODUCIBILITY</div><h2>Pipeline artifacts</h2></div><span class="muted-caption">Live file availability</span></div>
+            <div class="artifact-grid" id="artifactGrid"><div class="waiting-block">Checking workspace artifacts…</div></div>
+          </section>
+
+          <footer class="page-footer"><span>HAKI DATA CONTROL CENTER</span><span>Built for observable, recoverable RAG pipelines</span><span id="footerTime">—</span></footer>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@6.0.0/dist/echarts.min.js"></script>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

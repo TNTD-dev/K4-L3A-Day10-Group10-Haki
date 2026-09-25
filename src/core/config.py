@@ -35,6 +35,10 @@ class Paths:
     freshness_report: Path
     baseline_report: Path
     corruption_log: Path
+    self_healing_events_jsonl: Path
+    self_healing_latest_json: Path
+    pre_repair_quality_report: Path
+    post_repair_quality_report: Path
     corrupted_metrics: Path
     corrupted_answers: Path
     repaired_metrics: Path
@@ -106,6 +110,10 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         freshness_report=data_dir / "quality" / "freshness_report.json",
         baseline_report=data_dir / "reports" / "phase1_report.md",
         corruption_log=data_dir / "results" / "corruption_log.json",
+        self_healing_events_jsonl=data_dir / "results" / "self_healing_events.jsonl",
+        self_healing_latest_json=data_dir / "results" / "self_healing_latest.json",
+        pre_repair_quality_report=data_dir / "quality" / "pre_repair_quality_report.json",
+        post_repair_quality_report=data_dir / "quality" / "post_repair_quality_report.json",
         corrupted_metrics=data_dir / "results" / "corrupted_metrics.json",
         corrupted_answers=data_dir / "results" / "corrupted_answers.json",
         repaired_metrics=data_dir / "results" / "repaired_metrics.json",

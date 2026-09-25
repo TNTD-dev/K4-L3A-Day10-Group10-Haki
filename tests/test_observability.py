@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from automation.quality_gate import CoreQualityGate
 from core.config import load_settings
 from core.utils import read_json
 from evaluation.metrics import _token_f1
@@ -115,6 +116,9 @@ def test_noise_breaks_tokens_but_keeps_length():
 
 def test_gate_catches_corruption(clean_df, settings):
     corrupted = corrupt_clean_dataframe(clean_df, settings.paths.corruption_log)
+    core = CoreQualityGate().evaluate(corrupted)
+    noise_check = next(check for check in core["checks"] if check["name"] == "noise_marker_absent")
+    assert not noise_check["success"] and noise_check["observed"]["affected_rows"] > 0
     report = run_data_quality_checks(corrupted, settings, "corrupted", reference_unique_ids=clean_df["paper_id"].nunique())
     failed = " ".join(report["failed_expectations"])
     for needle in ("values_to_be_unique(paper_id)", "unique_value_count", "(summary)", "(title)"):
