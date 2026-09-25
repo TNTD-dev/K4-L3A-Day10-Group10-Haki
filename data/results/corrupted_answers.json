@@ -25,7 +25,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer is materially incorrect and unrelated to the paper's stated focus on privacy-preserving digital investigation readiness assessment. It instead discusses RAG inference latency and computation cost."
+      "reasoning": "The model answer describes a different focus\u2014RAG latency and computational cost\u2014rather than summarizing DOLPHIN\u2019s stated focus on rapid, reliable, privacy-preserving assessment of digital forensic case materials before formal examination."
     }
   },
   {
@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer conveys the same content as the reference answer, with only extraneous tilde/hash characters inserted within words. The meaning remains fully intact."
+      "reasoning": "The model answer matches the reference answer exactly in substance. It only contains extraneous character markers splitting words, which do not materially change the meaning."
     }
   },
   {
@@ -141,7 +141,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer is empty and does not provide any summary of the paper or address the reference answer's key point about challenges deploying LLMs for low-resource languages."
+      "reasoning": "The model answer is empty and does not provide any summary. It fails to mention the paper\u2019s focus on challenges of deploying LLMs for low-resource languages, including limited linguistic resources, sparse digital content, and lack of structured knowledge bases."
     }
   },
   {
@@ -199,7 +199,7 @@
     "judge": {
       "score": 1,
       "correct": false,
-      "reasoning": "The model answer gives 2025-07-02, but the reference answer is 2026-07-02. The year is incorrect, so the answer is materially wrong."
+      "reasoning": "The model answer gives 2025-07-02, but the reference answer states the paper was published on 2026-07-02. The year is incorrect, so the answer is materially wrong."
     }
   },
   {
@@ -228,7 +228,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, including all three authors: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
+      "reasoning": "The model answer exactly matches the reference authors: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
     }
   },
   {
@@ -257,7 +257,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer conveys the same meaning as the reference answer: fragmented access to MUI digital fatwa documents makes information retrieval less effective. The inserted tilde/hash characters appear to be formatting artifacts and do not materially alter the content."
+      "reasoning": "The model answer conveys the same content as the reference answer: fragmented access to MUI digital fatwa documents makes information retrieval less effective. The inserted \"~#\" characters are formatting artifacts but do not change the meaning."
     }
   },
   {

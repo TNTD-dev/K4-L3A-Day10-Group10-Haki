@@ -16,21 +16,6 @@
     "comment": ""
   },
   {
-    "paper_id": "10.70267/aitia.2026482489",
-    "title": "Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review",
-    "summary": "Large language models have accelerated the development of intelligent assistants by providing flexible natural- language understanding and generation. However, hallucination, knowledge staleness, and limited coverage of domain-specific information continue to restrict their reliability in knowledge-intensive tasks. This review examines how Retrieval -Augmented Generation (RAG) can strengthen LLM-based intelligent assistants by connecting generative capability with external, maintainable knowledge. It synthesi zes research on the technical foundations of RAG, key components and optimization strategies, and applications and challenges in intelligent-assistant settings. The review finds that RAG can improve knowledge accuracy and timeliness by grounding responses in retrieved evidence and allowing knowledge resources to be updated independently of the base model. These benefits are conditional: unreliable retrieval, poorly maintained sources, ineffective use of context, and fragmented evaluation can still produce u nsupported or unsafe answers. Reliable deployment, therefore, requires coordinated retrieval quality, knowledge management, generation control, and trustworthy evaluation. Future RAG-based assistants should combine these capabilities to become scalable, secure, evidence-aware, and verifiable systems.",
-    "authors": [
-      "Zilang Shao"
-    ],
-    "categories": [],
-    "primary_category": "",
-    "published": "2026-09-13",
-    "updated": "2026-09-13",
-    "abs_url": "https://doi.org/10.70267/aitia.2026482489",
-    "pdf_url": "https://journals.zeuspress.org/index.php/conference/article/download/1352/1280",
-    "comment": ""
-  },
-  {
     "paper_id": "10.54254/2755-2721/2026.36624",
     "title": "Advances in Reinforcement Learning for Retrieval-Augmented Generation in Large Language Model",
     "summary": "Retrieval-augmented generation (RAG) enhances large language models (LLMs) by incorporating external information, but traditional fixed retrieval processes struggle to adapt to complex task requirements. In recent years, reinforcement learning (RL) has been increasingly applied to train LLMs to autonomously invoke search tools, driving RAG to evolve from the passive information acquisition of a fixed pipeline to a trustworthy retrieval system with autonomous decision-making capabilities. This paper reviews the representative studies on the combination of LLMs, RAG and RL in recent years. It focuses on analyzing the role of RL in dynamic retrieval, process rewards, query optimization, etc., and compares the connections and evolutionary relationships among different methods. The research findings show that RL has gradually expanded from simply improving the accuracy of the final answer to optimizing queries, multi-round search, process decision-making and trustworthy screening, providing new ideas for enhancing the active retrieval ability of RAG and improving the credibility of information.",
@@ -43,6 +28,21 @@
     "updated": "2026-09-08",
     "abs_url": "https://doi.org/10.54254/2755-2721/2026.36624",
     "pdf_url": "",
+    "comment": ""
+  },
+  {
+    "paper_id": "10.70267/aitia.2026482489",
+    "title": "Retrieval-Augmented Generation for Large Language Model-Based Intelligent Assistants: A Review",
+    "summary": "Large language models have accelerated the development of intelligent assistants by providing flexible natural- language understanding and generation. However, hallucination, knowledge staleness, and limited coverage of domain-specific information continue to restrict their reliability in knowledge-intensive tasks. This review examines how Retrieval -Augmented Generation (RAG) can strengthen LLM-based intelligent assistants by connecting generative capability with external, maintainable knowledge. It synthesi zes research on the technical foundations of RAG, key components and optimization strategies, and applications and challenges in intelligent-assistant settings. The review finds that RAG can improve knowledge accuracy and timeliness by grounding responses in retrieved evidence and allowing knowledge resources to be updated independently of the base model. These benefits are conditional: unreliable retrieval, poorly maintained sources, ineffective use of context, and fragmented evaluation can still produce u nsupported or unsafe answers. Reliable deployment, therefore, requires coordinated retrieval quality, knowledge management, generation control, and trustworthy evaluation. Future RAG-based assistants should combine these capabilities to become scalable, secure, evidence-aware, and verifiable systems.",
+    "authors": [
+      "Zilang Shao"
+    ],
+    "categories": [],
+    "primary_category": "",
+    "published": "2026-09-13",
+    "updated": "2026-09-13",
+    "abs_url": "https://doi.org/10.70267/aitia.2026482489",
+    "pdf_url": "https://journals.zeuspress.org/index.php/conference/article/download/1352/1280",
     "comment": ""
   },
   {

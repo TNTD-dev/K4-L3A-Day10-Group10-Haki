@@ -1,0 +1,734 @@
+[
+  {
+    "id": "hard_001",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What does this study propose for helping clinicians interpret difficult oral imaging cases, and how is its combination of picture analysis, reference lookup, and self-checking reasoning evaluated?",
+    "ground_truth": "Abstract Diagnosing jawbone lesions in oral and maxillofacial radiology remains challenging due to overlapping radiological features and the need for integrated clinical reasoning. This study aimed to develop and validate JADE-Plus, a novel multimodal, agent-controlled retrieval-augmented generation (RAG) framework for diagnostic decision support in jawbone lesion assessment.",
+    "ground_truth_doc_ids": [
+      "10.1007/s10278-026-02086-9"
+    ],
+    "generation_attempts": 2,
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.1093/sleep/zsag091.0346",
+      "10.1007/s10278-026-02086-9",
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157"
+    ],
+    "rank": 2,
+    "abstained": true,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer does not address the study\u2019s proposal of JADE-Plus, a multimodal agent-controlled RAG framework combining image analysis, reference retrieval, and reasoning for jawbone lesion diagnosis."
+    }
+  },
+  {
+    "id": "hard_002",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who were the authors of the study that tested whether AI chat systems could give more reliable answers to specialist clinical questions by consulting reference books?",
+    "ground_truth": "Joseph Cheung, Pengze Li, Anshum Patel, SaiKrishna Vallamchetla, Het Contractor, Hayden Heninger, Cui Tao",
+    "ground_truth_doc_ids": [
+      "10.1093/sleep/zsag091.0346"
+    ],
+    "generation_attempts": 1,
+    "answer": "Joseph Cheung, Pengze Li, Anshum Patel, SaiKrishna Vallamchetla, Het Contractor, Hayden Heninger, and Cui Tao.",
+    "retrieved_doc_ids": [
+      "10.1093/sleep/zsag091.0346",
+      "10.63646/kpqm1958",
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference authors, with only an added conjunction before the final name."
+    }
+  },
+  {
+    "id": "hard_003",
+    "question_type": "date",
+    "answerable": true,
+    "question": "Do you remember when that paper about an AI assistant searching research papers while drafting a scholarly summary was published?",
+    "ground_truth": "2026-04-06",
+    "ground_truth_doc_ids": [
+      "10.20944/preprints202604.0339.v1"
+    ],
+    "generation_attempts": 1,
+    "answer": "It was published on April 6, 2025.",
+    "retrieved_doc_ids": [
+      "10.63646/kpqm1958",
+      "10.20944/preprints202604.0339.v1",
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": 2,
+    "abstained": false,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer gives April 6, 2025, but the reference answer is April 6, 2026. The incorrect year makes it materially wrong."
+    }
+  },
+  {
+    "id": "hard_004",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What literature-guided workflow does the paper propose for choosing compact machine-learning representations that balance accuracy and memory use on small connected devices?",
+    "ground_truth": "Selecting an encoding configuration for Hyperdimensional Computing (HDC) determines whether a model fits the memory budget of an Internet of Things (IoT) device, yet the knowledge needed to make that choice is dispersed across thousands of papers in a form no optimizer can query. The configuration space is large and each evaluation is expensive, so exhaustive search is infeasible; sequential optimizers are the standard remedy, but they begin from an uninformed prior and spend early evaluations exploring blindly.",
+    "ground_truth_doc_ids": [
+      "10.20944/preprints202608.1849.v1"
+    ],
+    "generation_attempts": 1,
+    "answer": "The paper proposes retrieving multimodal evidence from HDC literature based on a task profile, then using an agent to recommend an encoding configuration with citations. This recommendation seeds a constrained multi-objective search that experimentally refines the configuration for accuracy and inference-memory tradeoffs, with feasibility enforced by external measurements.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202608.1849.v1",
+      "10.1093/sleep/zsag091.0346",
+      "10.55041/isjem07213",
+      "10.36948/ijfmr.2026.v08i04.85777"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The answer accurately describes the proposed literature-guided workflow: retrieve relevant multimodal HDC evidence, use an agent to recommend a configuration with citations, and use that recommendation to initialize constrained multi-objective experimental optimization for accuracy and memory, with feasibility checked through measurements. This directly addresses the accuracy\u2013memory tradeoff and the inefficiency of uninformed search."
+    }
+  },
+  {
+    "id": "hard_005",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper about using a system that finds relevant documents and feeds them to a text-generating model to help organize information for public infrastructure and environmental research?",
+    "ground_truth": "Janet L. Autrey, Lacey S. Duckworth, Ashly N. Horner, Thomas Sigler, Victoria D. Moore",
+    "ground_truth_doc_ids": [
+      "10.21079/11681/50309"
+    ],
+    "generation_attempts": 1,
+    "answer": "Ruotong Wang, Nyutian Long, Shunqi Liu, Yuxi Wang, Zhen Qi, and Huajun Zhang.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.2118/234689-pa",
+      "10.63125/gseh0k17",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": null,
+    "abstained": false,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer lists a completely different group of authors. The reference answer identifies Janet L. Autrey, Lacey S. Duckworth, Ashly N. Horner, Thomas Sigler, and Victoria D. Moore."
+    }
+  },
+  {
+    "id": "hard_006",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was the paper about using language models with step-by-step searches through outside rules to analyze high-risk workplace incidents and produce reports published?",
+    "ground_truth": "2026-08-01",
+    "ground_truth_doc_ids": [
+      "10.2118/234689-pa"
+    ],
+    "generation_attempts": 1,
+    "answer": "It was published on August 1, 2025.",
+    "retrieved_doc_ids": [
+      "10.2118/234689-pa",
+      "10.63125/gseh0k17",
+      "10.20944/preprints202604.0339.v1",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer gives August 1, 2025, but the reference answer is August 1, 2026. The publication year is incorrect."
+    }
+  },
+  {
+    "id": "hard_007",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What practical decision aid does the paper propose for helping businesses weigh the risks, readiness, and safeguards involved in deploying increasingly autonomous machine-learning systems?",
+    "ground_truth": "Abstract Enterprise adoption of artificial intelligence (AI) systems, including Generative AI (GenAI), Retrieval-Augmented Generation (RAG), and agentic AI, is advancing faster than many organizations can adapt their governance, audit, cybersecurity, and executive oversight practices. This paper develops a proposed integrated AI governance prioritization architecture using a design-science research approach, supported by exploratory platform-risk analysis, a reproducible platform-risk dataset, a Monte Carlo robustness assessment, a framework coverage matrix, a Governance Priority Score (GPS)-based demonstration, and a public-document relevance assessment.",
+    "ground_truth_doc_ids": [
+      "10.21203/rs.3.rs-10012178/v1"
+    ],
+    "generation_attempts": 2,
+    "answer": "It proposes an integrated AI governance prioritization architecture centered on a Governance Priority Score (GPS). The GPS helps businesses weigh platform burden, governance-risk gaps, organizational readiness, and agentic runtime-control needs to guide deployment and executive oversight decisions.",
+    "retrieved_doc_ids": [
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.63646/kpqm1958",
+      "10.47576/2949-1894.2026.7.7.023",
+      "10.3390/buildings16132637"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The answer accurately identifies the proposed integrated AI governance prioritization architecture and its central Governance Priority Score (GPS). It correctly conveys that the tool weighs platform burden, governance risks, organizational readiness, and agentic runtime controls to support deployment and executive oversight decisions."
+    }
+  },
+  {
+    "id": "hard_008",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper about improving predictions of future stock movements by looking up similar past patterns and combining them with a pretrained prediction model?",
+    "ground_truth": "Novanto Yudistira, Yanuar Putra Kharisma Adhiyasa",
+    "ground_truth_doc_ids": [
+      "10.21203/rs.3.rs-10178277/v1"
+    ],
+    "generation_attempts": 1,
+    "answer": "Novanto Yudistira and Yanuar Putra Kharisma Adhiyasa.",
+    "retrieved_doc_ids": [
+      "10.21203/rs.3.rs-10178277/v1",
+      "10.63125/gseh0k17",
+      "10.20944/preprints202608.1849.v1",
+      "10.55041/isjem07213"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer, identifying Novanto Yudistira and Yanuar Putra Kharisma Adhiyasa as the authors."
+    }
+  },
+  {
+    "id": "hard_009",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was the paper about using a staged, tool-assisted language-model process to check whether rules apply to connected city infrastructure published?",
+    "ground_truth": "2026-09-12",
+    "ground_truth_doc_ids": [
+      "10.21203/rs.3.rs-10349437/v1"
+    ],
+    "generation_attempts": 1,
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.3390/buildings16132637",
+      "10.2118/234689-pa",
+      "10.20944/preprints202604.0339.v1",
+      "10.63125/gseh0k17"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer says it does not know and provides no publication date, whereas the reference answer is 2026-09-12."
+    }
+  },
+  {
+    "id": "hard_010",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What kind of evidence-checking, source-prioritizing assistant is proposed to help engineers produce consistent early-stage infrastructure design documents from project information and past guidance?",
+    "ground_truth": "Abstract Substation civil engineering preliminary design documents must integrate project-specific conditions, current regulatory requirements, typical design practices, and historical engineering experience while maintaining consistency across architectural, structural, general-layout, foundation, road, drainage, and technical-indicator sections. Conventional Retrieval-Augmented Generation (RAG) systems remain vulnerable to condition-insensitive retrieval, unequal source authority, incompatible evidence, unsupported engineering claims, and parameter drift during long-document drafting.",
+    "ground_truth_doc_ids": [
+      "10.21203/rs.3.rs-10423755/v1"
+    ],
+    "generation_attempts": 2,
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.3390/buildings16132637",
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.63125/gseh0k17",
+      "10.20944/preprints202608.1849.v1"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer says \u201cI don't know\u201d and does not identify or describe the proposed evidence-checking, source-prioritizing assistant."
+    }
+  },
+  {
+    "id": "hard_011",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the study about checking case files before forensic work using a local text model that consults supporting documents?",
+    "ground_truth": "Divya K",
+    "ground_truth_doc_ids": [
+      "10.21203/rs.3.rs-10489777/v1"
+    ],
+    "generation_attempts": 1,
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.1093/sleep/zsag091.0346",
+      "10.63125/gseh0k17",
+      "10.3390/knowledge6030022",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer says \"I don't know\" and does not identify the author, who is Divya K."
+    }
+  },
+  {
+    "id": "hard_012",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was this study about medical learners using an AI study helper grounded in reference materials and then sharing their views about its reliability and usefulness published?",
+    "ground_truth": "2026-07-03",
+    "ground_truth_doc_ids": [
+      "10.2196/preprints.106157"
+    ],
+    "generation_attempts": 3,
+    "answer": "2026-07-03.",
+    "retrieved_doc_ids": [
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157",
+      "10.1093/sleep/zsag091.0346",
+      "10.63646/kpqm1958"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference publication date: 2026-07-03."
+    }
+  },
+  {
+    "id": "hard_013",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What approach does the paper propose for helping people find public university records through a conversational interface, and how does it perform compared with a standalone text-generating system?",
+    "ground_truth": "Keterbukaan akses informasi publik diatur dalam Undang-Undang Nomor 14 Tahun 2008 tentang Keterbukaan Informasi Publik sebagai elemen utama untuk mewujudkan transparansi dan tata kelola pemerintahan yang baik. Di Universitas Lampung, Pejabat Pengelola Informasi dan Dokumentasi (PPID) menyediakan berbagai data publik melalui website resminya.",
+    "ground_truth_doc_ids": [
+      "10.28932/jutisi.v12i2.13099"
+    ],
+    "generation_attempts": 1,
+    "answer": "The paper proposes a Telegram chatbot using a Qwen2.5 VL 72B Instruct LLM with Retrieval-Augmented Generation (RAG), semantic search, and FAISS-indexed PPID records. It outperformed a standalone LLM in accuracy, with significantly fewer hallucinations, while achieving a 0.69-second average response latency.",
+    "retrieved_doc_ids": [
+      "10.28932/jutisi.v12i2.13099",
+      "10.28932/jutisi.v12i2.13099",
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 4,
+      "correct": true,
+      "reasoning": "The answer directly addresses both parts of the question: it describes a Telegram chatbot combining an LLM with RAG, semantic search, and FAISS-indexed PPID records, and compares it favorably with a standalone LLM in accuracy and hallucination rate. The stated PPID context is consistent with the reference, although the reference itself does not provide these implementation or performance details."
+    }
+  },
+  {
+    "id": "hard_014",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper about using cooperating software agents and image analysis to check construction drawings against safety regulations?",
+    "ground_truth": "Nawari O. Nawari, Oluwatoyin O. Lawal",
+    "ground_truth_doc_ids": [
+      "10.3390/buildings16132637"
+    ],
+    "generation_attempts": 2,
+    "answer": "Nawari O. Nawari and Oluwatoyin O. Lawal.",
+    "retrieved_doc_ids": [
+      "10.3390/buildings16132637",
+      "10.2118/234689-pa",
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.63646/kpqm1958"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference authors: Nawari O. Nawari and Oluwatoyin O. Lawal."
+    }
+  },
+  {
+    "id": "hard_015",
+    "question_type": "date",
+    "answerable": true,
+    "question": "Do you remember when that study about telling human-written articles from machine-produced ones using supporting evidence and specialized text analysis was published?",
+    "ground_truth": "2026-08-25",
+    "ground_truth_doc_ids": [
+      "10.3390/knowledge6030022"
+    ],
+    "generation_attempts": 2,
+    "answer": "It was published on August 25, 2026.",
+    "retrieved_doc_ids": [
+      "10.3390/knowledge6030022",
+      "10.3390/knowledge6030022",
+      "10.63646/kpqm1958",
+      "10.2196/preprints.106157"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference date: August 25, 2026."
+    }
+  },
+  {
+    "id": "hard_016",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "How does the paper suggest using language-based systems that retrieve supporting information, refine their own instructions, and learn from feedback to improve business decision-making?",
+    "ground_truth": "The article is devoted to the theoretical and methodological substantiation of the concept of intelligent automation of economic processes based on the integration of Retrieval-Augmented Generation (RAG), Large Language Models (LLM), Prompt Engineering, and Automatic Engineering technologies. The modern digital economy is moving from technical automation to cognitive automation, in which self-learning systems are emerging that can adapt to environmental changes, analyze the results of their own activities, and generate new economic solutions.",
+    "ground_truth_doc_ids": [
+      "10.36887/2415-8453-2026-3-2"
+    ],
+    "generation_attempts": 1,
+    "answer": "The paper suggests using retrieval-augmented language agents to gather and cite evidence from unstructured sources, organize it through a knowledge graph, and generate calibrated disruption alerts for human-verified decisions. Task planning, memory, and feedback-driven optimization can further refine the agents\u2019 reasoning and improve alert quality and supply-chain risk response.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.63125/gseh0k17",
+      "10.2118/234689-pa",
+      "10.20944/preprints202608.1849.v1"
+    ],
+    "rank": null,
+    "abstained": false,
+    "judge": {
+      "score": 3,
+      "correct": false,
+      "reasoning": "The model answer captures the general idea of using retrieval-augmented, feedback-improving language systems for better business decisions, but it adds specific mechanisms and applications\u2014knowledge graphs, calibrated disruption alerts, and supply-chain risk response\u2014that are not stated in the reference. It also omits the paper\u2019s broader focus on integrating RAG, LLMs, Prompt Engineering, and Automatic Engineering for cognitive automation and self-learning economic processes."
+    }
+  },
+  {
+    "id": "hard_017",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper about improving computer-generated text for a language with limited online resources by having the system look up relevant information and keep learning from new material?",
+    "ground_truth": "Vanlalropuia Ralte, Abhisake Sinha -",
+    "ground_truth_doc_ids": [
+      "10.36948/ijfmr.2026.v08i04.85777"
+    ],
+    "generation_attempts": 1,
+    "answer": "Vanlalropuia Ralte and Abhisake Sinha.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.36948/ijfmr.2026.v08i04.85777",
+      "10.1093/sleep/zsag091.0346",
+      "10.2196/preprints.106157"
+    ],
+    "rank": 2,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference authors, with only a minor wording difference ('and' instead of a comma)."
+    }
+  },
+  {
+    "id": "hard_018",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was the paper about using a generative text system with a document-search step to support business protection and decision-making in a food-production sector published?",
+    "ground_truth": "2026-06-15",
+    "ground_truth_doc_ids": [
+      "10.47576/2949-1894.2026.7.7.023"
+    ],
+    "generation_attempts": 1,
+    "answer": "It was published on June 15, 2026.",
+    "retrieved_doc_ids": [
+      "10.47576/2949-1894.2026.7.7.023",
+      "10.63125/gseh0k17",
+      "10.2118/234689-pa",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer gives June 15, 2026, exactly matching the reference date 2026-06-15."
+    }
+  },
+  {
+    "id": "hard_019",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "What approach does the paper propose for answering religious questions by checking one collection of guidance first and turning to another trusted source when the first does not fit, and what improvement does it report?",
+    "ground_truth": "Aksesibilitas dokumen digital Fatwa Majelis Ulama Indonesia (MUI) yang terfragmentasi membuat pencarian informasi kurang efektif. Di sisi lain, sistem tanya jawab AI berbasis satu sumber dokumen (single-corpus) rentan menghasilkan jawaban tidak akurat (halusinasi) pada pertanyaan di luar domain.",
+    "ground_truth_doc_ids": [
+      "10.52060/juptik.v4i1.4318"
+    ],
+    "generation_attempts": 1,
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157",
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.1093/sleep/zsag091.0346"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer provides no substantive response to the question, so it does not identify the proposed two-source approach or the reported improvement."
+    }
+  },
+  {
+    "id": "hard_020",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper reviewing how reward-based learning helps language models decide when and how to search for outside information while generating answers?",
+    "ground_truth": "Zunlong Hong",
+    "ground_truth_doc_ids": [
+      "10.54254/2755-2721/2026.36624"
+    ],
+    "generation_attempts": 1,
+    "answer": "Ruotong Wang, Nyutian Long, Shunqi Liu, Yuxi Wang, Zhen Qi, and Huajun Zhang.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.1093/sleep/zsag091.0346",
+      "10.55041/isjem07213",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": null,
+    "abstained": false,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer lists six different authors and does not include Zunlong Hong, the author identified in the reference answer."
+    }
+  },
+  {
+    "id": "hard_021",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was the paper about making knowledge-grounded text generation cheaper and faster by combining two kinds of document search with a small draft model and a larger checking model published?",
+    "ground_truth": "2026-05-06",
+    "ground_truth_doc_ids": [
+      "10.55041/isjem07213"
+    ],
+    "generation_attempts": 1,
+    "answer": "It was published on May 6, 2026.",
+    "retrieved_doc_ids": [
+      "10.55041/isjem07213",
+      "10.20944/preprints202604.0339.v1",
+      "10.3390/knowledge6030022",
+      "10.3390/knowledge6030022"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference date: May 6, 2026."
+    }
+  },
+  {
+    "id": "hard_022",
+    "question_type": "summary",
+    "answerable": true,
+    "question": "For organizations trying to spot problems in sourcing and delivery before they happen, what does the paper propose or find about using a language-based system that searches and combines scattered reports and records to issue useful warnings?",
+    "ground_truth": "This study has examined whether a foundation model architecture, combining large language models with a supply chain knowledge graph and retrieval-augmented generation, can predict supply chain disruptions from unstructured evidence more effectively than the classical machine learning methods that dominate current practice, and it has developed and tested a framework for automated disruption alerting across supplier, logistics, regulatory, and hazard risk domains. The central problem has been that the great majority of the information that signals an impending disruption arrives as unstructured text, in supplier annual reports and financial disclosures, in global news reporting, in tariff and sanctions registers, and in hazard bulletins, whereas classical supply chain risk models require structured tabular features, so that this evidence is either discarded or converted into features by manual analyst reading that cannot scale to a multi-tier network of thousands of suppliers.",
+    "ground_truth_doc_ids": [
+      "10.63125/gseh0k17"
+    ],
+    "generation_attempts": 1,
+    "answer": "The paper proposes combining an LLM with multi-source retrieval, a supply-chain knowledge graph, evidence grounding, and analyst verification to turn scattered reports and records into automated disruption alerts. It finds that retrieval improves evidence attribution and reduces unsupported claims, while the knowledge graph improves detection of multi-tier exposure; together, they achieved alert quality suitable for use without exhaustive human review.",
+    "retrieved_doc_ids": [
+      "10.63125/gseh0k17",
+      "10.2118/234689-pa",
+      "10.20944/preprints202604.0339.v1",
+      "10.47576/2949-1894.2026.7.7.023"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 4,
+      "correct": true,
+      "reasoning": "The model answer accurately captures the paper\u2019s proposed approach: combining an LLM with retrieval, a supply-chain knowledge graph, evidence grounding, and verification to generate automated disruption alerts from scattered unstructured sources. It also correctly states the findings about improved evidence attribution, fewer unsupported claims, and better multi-tier exposure detection. It omits some reference details, such as comparison with classical machine learning and the specific risk domains, and its claim that alerts were usable without exhaustive human review is somewhat stronger than the reference, but it remains materially correct."
+    }
+  },
+  {
+    "id": "hard_023",
+    "question_type": "authors",
+    "answerable": true,
+    "question": "Who wrote the paper that surveys research on computer systems able to reason, remember, use outside tools, and work together, using publication and citation patterns to map the field\u2019s applications and challenges?",
+    "ground_truth": "Ben J. Weber, Clara M. Hofmann, Amara N. Okoye",
+    "ground_truth_doc_ids": [
+      "10.63646/kpqm1958"
+    ],
+    "generation_attempts": 1,
+    "answer": "Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye.",
+    "retrieved_doc_ids": [
+      "10.63646/kpqm1958",
+      "10.21203/rs.3.rs-10012178/v1",
+      "10.20944/preprints202604.0339.v1",
+      "10.20944/preprints202608.1849.v1"
+    ],
+    "rank": 1,
+    "abstained": false,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
+    }
+  },
+  {
+    "id": "hard_024",
+    "question_type": "date",
+    "answerable": true,
+    "question": "When was the paper published that surveys a way of improving automated conversational systems by looking up outside information before composing responses?",
+    "ground_truth": "2026-09-13",
+    "ground_truth_doc_ids": [
+      "10.70267/aitia.2026482489"
+    ],
+    "generation_attempts": 2,
+    "answer": "It was published on June 30, 2026.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.63646/kpqm1958",
+      "10.28932/jutisi.v12i2.13099",
+      "10.28932/jutisi.v12i2.13099"
+    ],
+    "rank": null,
+    "abstained": false,
+    "judge": {
+      "score": 1,
+      "correct": false,
+      "reasoning": "The model answer gives June 30, 2026, but the reference answer states that the paper was published on September 13, 2026."
+    }
+  },
+  {
+    "id": "hard_025",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "Who wrote the study on a retrieval-augmented assistant that helps tax auditors check invoices against regulations?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.2118/234689-pa",
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157",
+      "10.20944/preprints202604.0339.v1"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: it appropriately states that it does not know."
+    }
+  },
+  {
+    "id": "hard_026",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "When was the paper published about an agent that retrieves maintenance manuals to troubleshoot aircraft engines?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.2118/234689-pa",
+      "10.63646/kpqm1958",
+      "10.21203/rs.3.rs-10178277/v1"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: the publication date is unknown from the available information."
+    }
+  },
+  {
+    "id": "hard_027",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "What does the study find about using retrieval-augmented language models to answer insurance claim questions?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202604.0339.v1",
+      "10.1093/sleep/zsag091.0346",
+      "10.55041/isjem07213",
+      "10.2196/preprints.106157"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: the available information does not establish what the study found."
+    }
+  },
+  {
+    "id": "hard_028",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "Who authored the work on an agentic retrieval system that recommends recipes from nutrition guidelines?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202608.1849.v1",
+      "10.63646/kpqm1958",
+      "10.1007/s10278-026-02086-9",
+      "10.20944/preprints202604.0339.v1"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: the author is unknown based on the available indexed corpus."
+    }
+  },
+  {
+    "id": "hard_029",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "When was the research published on retrieval-augmented tutoring that grades high-school physics homework?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.2196/preprints.106157",
+      "10.2196/preprints.106157",
+      "10.21203/rs.3.rs-10178277/v1",
+      "10.1093/sleep/zsag091.0346"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: the publication date is unknown from the available information."
+    }
+  },
+  {
+    "id": "hard_030",
+    "question_type": "unanswerable",
+    "answerable": false,
+    "question": "What does the paper propose for retrieval-augmented agents that negotiate energy prices in smart grids?",
+    "ground_truth": "I don't know. The indexed corpus does not contain this information.",
+    "ground_truth_doc_ids": [],
+    "answer": "I don't know.",
+    "retrieved_doc_ids": [
+      "10.20944/preprints202608.1849.v1",
+      "10.20944/preprints202604.0339.v1",
+      "10.55041/isjem07213",
+      "10.21203/rs.3.rs-10012178/v1"
+    ],
+    "rank": null,
+    "abstained": true,
+    "judge": {
+      "score": 5,
+      "correct": true,
+      "reasoning": "The model answer exactly matches the reference answer: the information is not available in the indexed corpus."
+    }
+  }
+]

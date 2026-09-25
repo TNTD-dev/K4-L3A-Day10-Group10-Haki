@@ -25,7 +25,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, providing the stated abstract summary."
+      "reasoning": "The model answer exactly matches the reference answer, including the full abstract sentence provided."
     }
   },
   {
@@ -54,7 +54,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, identifying Sathiska Priyad and Gayathri Karthick as the authors."
+      "reasoning": "The model answer exactly matches the reference answer, naming Sathiska Priyad and Gayathri Karthick as the authors."
     }
   },
   {
@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, accurately providing the requested summary."
+      "reasoning": "The model answer exactly matches the reference answer, accurately summarizing the paper\u2019s abstract."
     }
   },
   {
@@ -141,7 +141,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer and directly provides the requested summary statement."
+      "reasoning": "The model answer exactly matches the reference answer and accurately states the paper's summary point."
     }
   },
   {
@@ -170,7 +170,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, listing both authors correctly."
+      "reasoning": "The model answer exactly matches the reference answer, naming both authors correctly."
     }
   },
   {
@@ -257,7 +257,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer and accurately states the paper's summary."
+      "reasoning": "Model answer exactly matches the reference answer, accurately stating that fragmented access to MUI fatwa documents makes information retrieval less effective."
     }
   },
   {
@@ -286,7 +286,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, listing all seven authors in the same order."
+      "reasoning": "The model answer exactly matches the reference answer, including all seven authors in the correct order."
     }
   }
 ]

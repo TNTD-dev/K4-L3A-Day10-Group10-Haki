@@ -143,3 +143,16 @@ def test_testset_skips_unanswerable_type(clean_df, settings):
 def test_report_and_dashboard_handle_missing_artifacts(settings):
     generate_corruption_report(settings.paths.comparison_report, {}, {}, {}, {}, {}, {}, {})
     assert "Chưa đủ artifacts" in build_dashboard(settings).read_text(encoding="utf-8")
+
+
+def test_hard_benchmark_leakage_filter_and_ci():
+    from evaluation.hard_benchmark import leakage_reason, wilson
+
+    paper = {"paper_id": "10.1/abc", "title": "Agentic Retrieval for Multi Hop Question Answering",
+             "summary": "We propose a planner that decomposes complex questions into verifiable sub queries."}
+    assert leakage_reason("Who wrote the agentic retrieval for multi hop study?", paper).startswith("title")
+    assert leakage_reason("What does the planner that decomposes complex questions into verifiable steps find?", paper).startswith("abstract")
+    assert leakage_reason("Who wrote 10.1/abc?", paper) == "contains DOI"
+    assert leakage_reason("Who wrote the work on breaking hard queries into checkable parts?", paper) is None
+    lo, hi = wilson(8, 10)
+    assert lo < 0.8 < hi and wilson(0, 0) == [0.0, 0.0]

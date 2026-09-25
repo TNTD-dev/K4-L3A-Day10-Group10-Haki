@@ -1,6 +1,6 @@
 # Phase 1 Report — Baseline Pipeline
 
-_Generated: 2026-09-25T08:54:45.517651+00:00_
+_Generated: 2026-09-25T09:03:52.699482+00:00_
 
 ## 1. Source & Lineage
 

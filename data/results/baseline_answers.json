@@ -112,7 +112,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the provided reference answer, accurately summarizing the paper\u2019s abstract."
+      "reasoning": "The model answer exactly matches the provided reference answer, including all key requirements and document sections."
     }
   },
   {
@@ -141,7 +141,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer and accurately states the paper\u2019s summary point."
+      "reasoning": "The model answer exactly matches the reference answer and directly states the paper\u2019s summary point."
     }
   },
   {
@@ -170,7 +170,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, naming both authors correctly."
+      "reasoning": "The model answer exactly matches the reference answer, naming Novanto Yudistira and Yanuar Putra Kharisma Adhiyasa as the authors."
     }
   },
   {
@@ -199,7 +199,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer: 2026-07-02."
+      "reasoning": "The model answer exactly matches the reference publication date: 2026-07-02."
     }
   },
   {
@@ -228,7 +228,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, naming Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye as the authors."
+      "reasoning": "The model answer exactly matches the reference answer, identifying all three authors: Ben J. Weber, Clara M. Hofmann, and Amara N. Okoye."
     }
   },
   {
@@ -257,7 +257,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, accurately stating that fragmented access to MUI fatwa digital documents makes information retrieval less effective."
+      "reasoning": "Model answer exactly matches the reference answer and accurately states the paper's summary."
     }
   },
   {
@@ -286,7 +286,7 @@
     "judge": {
       "score": 5,
       "correct": true,
-      "reasoning": "The model answer exactly matches the reference answer, listing all seven authors in the same order."
+      "reasoning": "The model answer exactly matches the reference answer, including all seven authors in the correct order."
     }
   }
 ]
