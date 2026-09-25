@@ -113,10 +113,10 @@ def test_corruption_is_deterministic_and_logs_all_scenarios(tmp_path: Path) -> N
     ]
     assert log["input_rows"] == 24
     assert log["output_rows"] == len(corrupted)
-    assert len(corrupted) == 21
+    assert len(corrupted) == 22  # 24 - 5 drop + 3 duplicate
     assert corrupted["paper_id"].duplicated().any()
     assert (corrupted["summary"] == "").any()
-    assert corrupted["summary"].str.contains(r"\[NOISE_###@@@%%%\]", regex=True).any()
+    assert corrupted["summary"].str.contains("~#", regex=False).any()
     assert corrupted["title"].str.len().lt(8).any()
     assert corrupted["age_days"].gt(clean["age_days"].max()).any()
     assert corrupted["text_for_embedding"].str.contains("Summary:", regex=False).all()

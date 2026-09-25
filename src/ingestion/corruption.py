@@ -1,228 +1,138 @@
 from __future__ import annotations
 
-from collections import Counter
-from datetime import date, datetime, timedelta, timezone
 import math
+import re
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
-from core.utils import write_json
+from core.utils import now_utc, write_json
 from ingestion.cleaning import build_embedding_text
 
-
-def _to_date(value: Any) -> date:
-    if isinstance(value, datetime):
-        return value.date()
-    if isinstance(value, date):
-        return value
-    return date.fromisoformat(str(value)[:10])
-
-
-def _infer_run_date(df: pd.DataFrame) -> date:
-    candidates: list[date] = []
-    for _, row in df.iterrows():
-        try:
-            published = _to_date(row["published"])
-            age_days = int(row["age_days"])
-        except (TypeError, ValueError, OverflowError):
-            continue
-        if age_days > 0:
-            candidates.append(published + timedelta(days=age_days))
-    if candidates:
-        counts = Counter(candidates)
-        return counts.most_common(1)[0][0]
-    if not df.empty:
-        return max(_to_date(value) for value in df["published"])
-    return datetime.now(timezone.utc).date()
+DROP_LATEST_RATIO = 0.2
+STALE_RATIO = 0.35
+STALE_SHIFT_DAYS = 365
+TRUNCATE_CHARS = 6
+NOISE_MARKER = "~#"
+COUNTS = {"blank_summary": 2, "inject_noise": 2, "truncate_title": 2, "duplicate_rows": 3}
 
 
-def _refresh_derived_columns(df: pd.DataFrame, run_date: date) -> None:
-    for index, row in df.iterrows():
-        authors = row["authors"] if isinstance(row["authors"], list) else []
-        categories = row["categories"] if isinstance(row["categories"], list) else []
-        authors_joined = ", ".join(str(author) for author in authors if author)
-        categories_joined = ", ".join(str(category) for category in categories if category)
-        summary = "" if pd.isna(row["summary"]) else str(row["summary"])
-        title = "" if pd.isna(row["title"]) else str(row["title"])
-        published = _to_date(row["published"]).isoformat()
-        df.at[index, "authors_joined"] = authors_joined
-        df.at[index, "categories_joined"] = categories_joined
-        df.at[index, "published"] = published
-        df.at[index, "age_days"] = max(0, (run_date - date.fromisoformat(published)).days)
-        df.at[index, "summary_chars"] = len(summary)
-        df.at[index, "text_for_embedding"] = build_embedding_text(
-            title,
-            authors_joined,
-            published,
-            categories_joined,
-            summary,
-        )
+def inject_noise(text: str) -> str:
+    # Chen rac vao GIUA tu (ca cau dau) -> token that bi pha, F1 sap; do dai van hop le -> GX khong bat (silent).
+    return re.sub(r"(\w{3})(?=\w)", rf"\1{NOISE_MARKER}", text)
 
 
-def _selected_indices(length: int, count: int) -> list[int]:
-    if length <= 0 or count <= 0:
-        return []
-    count = min(length, count)
-    if count == 1:
-        return [0]
-    return sorted({round(position * (length - 1) / (count - 1)) for position in range(count)})
+def _ids_by_type(test_set: list[dict[str, Any]] | None) -> dict[str, list[str]]:
+    grouped: dict[str, list[str]] = {}
+    for item in test_set or []:
+        grouped.setdefault(item["question_type"], []).extend(str(pid) for pid in item["ground_truth_doc_ids"])
+    return grouped
 
 
-def _scenario(
-    name: str,
-    affected_ids: list[str],
-    parameters: dict[str, Any],
-    before: int,
-    after: int,
-) -> dict[str, Any]:
-    return {
-        "name": name,
-        "affected_count": len(affected_ids),
-        "affected_paper_ids": affected_ids,
-        "parameters": parameters,
-        "row_count_before": before,
-        "row_count_after": after,
-    }
+def _pick(pool: list[str], preferred: list[str], k: int, used: set[str]) -> list[str]:
+    """Uu tien paper nam trong benchmark (de tac dong do duoc), thieu thi lay tiep theo paper_id."""
+    chosen = [pid for pid in preferred if pid in pool and pid not in used][:k]
+    chosen += [pid for pid in pool if pid not in used and pid not in chosen][: k - len(chosen)]
+    used.update(chosen)
+    return chosen
 
 
-def corrupt_clean_dataframe(df: pd.DataFrame, output_log_path: Path | str) -> pd.DataFrame:
-    """Apply six deterministic data faults and write an auditable corruption log."""
-    required = {
-        "paper_id",
-        "title",
-        "summary",
-        "authors",
-        "categories",
-        "published",
-        "age_days",
-        "authors_joined",
-        "categories_joined",
-        "summary_chars",
-        "text_for_embedding",
-    }
-    missing = sorted(required - set(df.columns))
-    if missing:
-        raise ValueError(f"Clean dataframe is missing required columns: {', '.join(missing)}.")
+def _rebuild_derived(data: pd.DataFrame) -> None:
+    data["text_for_embedding"] = [
+        build_embedding_text(r["title"], r["authors_joined"], r["published"], r["categories_joined"], r["summary"])
+        for r in data.to_dict("records")
+    ]
+    if "summary_chars" in data.columns:
+        data["summary_chars"] = data["summary"].str.len()
 
-    reference_date = _infer_run_date(df)
-    corrupted = df.copy(deep=True)
-    corrupted = corrupted.sort_values(
-        by=["published", "paper_id"],
-        ascending=[False, True],
-        kind="mergesort",
-        ignore_index=True,
-    )
-    original_count = len(corrupted)
+
+def corrupt_clean_dataframe(
+    df: pd.DataFrame, output_log_path: Path | str, test_set: list[dict[str, Any]] | None = None
+) -> pd.DataFrame:
+    """Tiem 6 loai loi co kiem soat, tat dinh (khong random, khong phu thuoc thu tu dong input).
+
+    `test_set` (tuy chon): targeted injection - moi loi nham vao paper cua loai cau hoi ma no pha
+    (blank/noise -> summary, stale -> date, truncate -> authors/categories). Khong co -> chon theo paper_id.
+    """
+    input_rows = len(df)
+    data = df.copy(deep=True)
+    data["paper_id"] = data["paper_id"].astype(str)
+    data["published"] = pd.to_datetime(data["published"]).dt.strftime("%Y-%m-%d")
+    targets = _ids_by_type(test_set)
+    benchmark_ids = {pid for ids in targets.values() for pid in ids}
     scenarios: list[dict[str, Any]] = []
 
-    drop_count = min(max(0, original_count - 1), math.ceil(original_count * 0.2))
-    before = len(corrupted)
-    dropped = corrupted.iloc[:drop_count]["paper_id"].astype(str).tolist()
-    corrupted = corrupted.iloc[drop_count:].reset_index(drop=True)
-    scenarios.append(
-        _scenario(
-            "drop_latest_records",
-            dropped,
-            {"fraction": 0.2, "dropped_count": drop_count},
-            before,
-            len(corrupted),
-        )
-    )
+    def record(name: str, description: str, ids: list[str], detector: str, parameters: dict, before: int) -> None:
+        scenarios.append({
+            "name": name,
+            "description": description,
+            "affected_count": len(ids),
+            "affected_paper_ids": ids,
+            "benchmark_hits": [pid for pid in ids if pid in benchmark_ids],
+            "parameters": parameters,
+            "expected_detector": detector,
+            "row_count_before": before,
+            "row_count_after": len(data),
+        })
 
-    if len(corrupted):
-        # Each single-row corruption uses a fixed rank in the stable sorted set.
-        blank_index = 0
-        before = len(corrupted)
-        blank_id = str(corrupted.at[blank_index, "paper_id"])
-        corrupted.at[blank_index, "summary"] = ""
-        _refresh_derived_columns(corrupted, reference_date)
-        scenarios.append(
-            _scenario("blank_summary", [blank_id], {"selected_rank": blank_index}, before, len(corrupted))
-        )
+    # 1. Drop latest 20%: ingestion bo sot du lieu moi.
+    before = len(data)
+    k = min(max(0, before - 1), math.ceil(before * DROP_LATEST_RATIO))
+    latest = data.sort_values(["published", "paper_id"], ascending=[False, True], kind="mergesort").head(k)["paper_id"].tolist()
+    data = data[~data["paper_id"].isin(latest)].sort_values("paper_id", kind="mergesort").reset_index(drop=True)
+    record("drop_latest_records", f"Bo {k} bai moi nhat.", latest,
+           "GX volume ExpectColumnUniqueValueCountToBeBetween(paper_id >= 90% baseline)", {"fraction": DROP_LATEST_RATIO}, before)
 
-        noise_index = min(1, len(corrupted) - 1)
-        before = len(corrupted)
-        noise_id = str(corrupted.at[noise_index, "paper_id"])
-        summary = str(corrupted.at[noise_index, "summary"] or "")
-        corrupted.at[noise_index, "summary"] = f"{summary} [NOISE_###@@@%%%]".strip()
-        _refresh_derived_columns(corrupted, reference_date)
-        scenarios.append(
-            _scenario(
-                "inject_noise",
-                [noise_id],
-                {"marker": "[NOISE_###@@@%%%]", "selected_rank": noise_index},
-                before,
-                len(corrupted),
-            )
-        )
+    pool = data["paper_id"].tolist()
+    used: set[str] = set()
+    summary_ids = targets.get("summary", [])
 
-        title_index = min(2, len(corrupted) - 1)
-        before = len(corrupted)
-        title_id = str(corrupted.at[title_index, "paper_id"])
-        corrupted.at[title_index, "title"] = str(corrupted.at[title_index, "title"])[:7]
-        _refresh_derived_columns(corrupted, reference_date)
-        scenarios.append(
-            _scenario(
-                "truncate_title",
-                [title_id],
-                {"max_characters": 7, "selected_rank": title_index},
-                before,
-                len(corrupted),
-            )
-        )
+    # 2. Blank summary.
+    ids = _pick(pool, summary_ids[0::2], COUNTS["blank_summary"], used)
+    data.loc[data["paper_id"].isin(ids), "summary"] = ""
+    record("blank_summary", "Xoa rong summary.", ids,
+           "GX ExpectColumnValueLengthsToBeBetween(summary >= 30)", {}, len(data))
 
-        stale_count = math.ceil(len(corrupted) * 0.3)
-        stale_indices = _selected_indices(len(corrupted), stale_count)
-        before = len(corrupted)
-        stale_ids = corrupted.loc[stale_indices, "paper_id"].astype(str).tolist()
-        for index in stale_indices:
-            old_date = _to_date(corrupted.at[index, "published"])
-            corrupted.at[index, "published"] = (old_date - timedelta(days=365)).isoformat()
-        _refresh_derived_columns(corrupted, reference_date)
-        scenarios.append(
-            _scenario(
-                "stale_date",
-                stale_ids,
-                {"days_subtracted": 365, "fraction": 0.3, "selected_ranks": stale_indices},
-                before,
-                len(corrupted),
-            )
-        )
+    # 3. Inject noise.
+    ids = _pick(pool, summary_ids[1::2], COUNTS["inject_noise"], used)
+    mask = data["paper_id"].isin(ids)
+    data.loc[mask, "summary"] = data.loc[mask, "summary"].map(inject_noise)
+    record("inject_noise", f"Chen '{NOISE_MARKER}' vao giua cac tu cua summary.", ids,
+           "Khong co (silent) - chi lo qua Token F1", {"marker": NOISE_MARKER}, len(data))
 
-        duplicate_count = min(len(corrupted), max(1, math.ceil(len(corrupted) * 0.1)))
-        duplicate_indices = list(range(duplicate_count))
-        before = len(corrupted)
-        duplicate_ids = corrupted.loc[duplicate_indices, "paper_id"].astype(str).tolist()
-        duplicates = corrupted.iloc[duplicate_indices].copy(deep=True)
-        corrupted = pd.concat([corrupted, duplicates], ignore_index=True)
-        _refresh_derived_columns(corrupted, reference_date)
-        scenarios.append(
-            _scenario(
-                "duplicate_rows",
-                duplicate_ids,
-                {"duplicate_count": duplicate_count, "selected_ranks": duplicate_indices},
-                before,
-                len(corrupted),
-            )
-        )
-    else:
-        for name, parameters in (
-            ("blank_summary", {"selected_rank": None}),
-            ("inject_noise", {"marker": "[NOISE_###@@@%%%]", "selected_rank": None}),
-            ("truncate_title", {"max_characters": 7, "selected_rank": None}),
-            ("stale_date", {"days_subtracted": 365, "fraction": 0.3, "selected_ranks": []}),
-            ("duplicate_rows", {"duplicate_count": 0, "selected_ranks": []}),
-        ):
-            scenarios.append(_scenario(name, [], parameters, len(corrupted), len(corrupted)))
+    # 4. Truncate title < 8 ky tu.
+    ids = _pick(pool, targets.get("authors", []) + targets.get("categories", []), COUNTS["truncate_title"], used)
+    mask = data["paper_id"].isin(ids)
+    data.loc[mask, "title"] = data.loc[mask, "title"].str[:TRUNCATE_CHARS]
+    record("truncate_title", f"Cat title con {TRUNCATE_CHARS} ky tu.", ids,
+           "GX ExpectColumnValueLengthsToBeBetween(title >= 8) + exact lookup fail", {"max_characters": TRUNCATE_CHARS}, len(data))
 
-    log = {
-        "version": 1,
-        "input_rows": original_count,
-        "output_rows": len(corrupted),
-        "run_date": reference_date.isoformat(),
+    # 5. Stale date: lui 365 ngay tren ~35% dong -> vuot SLA 25%.
+    ids = _pick(pool, targets.get("date", []), max(1, round(len(pool) * STALE_RATIO)), used)
+    mask = data["paper_id"].isin(ids)
+    shifted = pd.to_datetime(data.loc[mask, "published"]) - pd.Timedelta(days=STALE_SHIFT_DAYS)
+    data.loc[mask, "published"] = shifted.dt.strftime("%Y-%m-%d")
+    data.loc[mask, "age_days"] = data.loc[mask, "age_days"] + STALE_SHIFT_DAYS
+    record("stale_date", f"Lui published {STALE_SHIFT_DAYS} ngay.", ids,
+           "Freshness SLA is_fresh=False (warning)", {"days_subtracted": STALE_SHIFT_DAYS, "fraction": STALE_RATIO}, len(data))
+
+    # 6. Duplicate rows (tu cac dong chua bi dung).
+    before = len(data)
+    ids = _pick(pool, [], COUNTS["duplicate_rows"], used)
+    data = pd.concat([data, data[data["paper_id"].isin(ids)]], ignore_index=True)
+    record("duplicate_rows", f"Nhan ban {len(ids)} dong.", ids,
+           "GX ExpectColumnValuesToBeUnique(paper_id)", {"duplicate_count": len(ids)}, before)
+
+    # 7. Rebuild cot phu thuoc de loi "chay" xuong embedding.
+    _rebuild_derived(data)
+
+    write_json(Path(output_log_path), {
+        "version": 2,
+        "generated_at": now_utc().isoformat(),
+        "targeted_injection": bool(test_set),
+        "input_rows": input_rows,
+        "output_rows": len(data),
         "scenarios": scenarios,
-    }
-    write_json(Path(output_log_path), log)
-    return corrupted
+    })
+    return data

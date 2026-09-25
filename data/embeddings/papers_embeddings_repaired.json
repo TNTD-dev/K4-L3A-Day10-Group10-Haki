@@ -2,7 +2,7 @@
   "backend": "chroma",
   "embedding_provider": "openai",
   "embedding_model": "text-embedding-3-small",
-  "persist_path": "data/chroma",
+  "persist_path": "data\\chroma",
   "collection_name": "papers-repaired",
   "documents": [
     {

@@ -1,11 +1,13 @@
 {
-  "version": 1,
+  "version": 2,
+  "generated_at": "2026-09-25T08:34:55.222401+00:00",
+  "targeted_injection": true,
   "input_rows": 24,
-  "output_rows": 21,
-  "run_date": "2026-09-25",
+  "output_rows": 22,
   "scenarios": [
     {
       "name": "drop_latest_records",
+      "description": "Bo 5 bai moi nhat.",
       "affected_count": 5,
       "affected_paper_ids": [
         "10.21203/rs.3.rs-10489777/v1",
@@ -14,93 +16,113 @@
         "10.54254/2755-2721/2026.36624",
         "10.36887/2415-8453-2026-3-2"
       ],
+      "benchmark_hits": [
+        "10.21203/rs.3.rs-10489777/v1",
+        "10.21203/rs.3.rs-10349437/v1",
+        "10.36887/2415-8453-2026-3-2"
+      ],
       "parameters": {
-        "fraction": 0.2,
-        "dropped_count": 5
+        "fraction": 0.2
       },
+      "expected_detector": "GX volume ExpectColumnUniqueValueCountToBeBetween(paper_id >= 90% baseline)",
       "row_count_before": 24,
       "row_count_after": 19
     },
     {
       "name": "blank_summary",
-      "affected_count": 1,
+      "description": "Xoa rong summary.",
+      "affected_count": 2,
       "affected_paper_ids": [
-        "10.28932/jutisi.v12i2.13099"
+        "10.36948/ijfmr.2026.v08i04.85777",
+        "10.1007/s10278-026-02086-9"
       ],
-      "parameters": {
-        "selected_rank": 0
-      },
+      "benchmark_hits": [
+        "10.36948/ijfmr.2026.v08i04.85777"
+      ],
+      "parameters": {},
+      "expected_detector": "GX ExpectColumnValueLengthsToBeBetween(summary >= 30)",
       "row_count_before": 19,
       "row_count_after": 19
     },
     {
       "name": "inject_noise",
-      "affected_count": 1,
+      "description": "Chen '~#' vao giua cac tu cua summary.",
+      "affected_count": 2,
       "affected_paper_ids": [
-        "10.20944/preprints202608.1849.v1"
+        "10.21203/rs.3.rs-10423755/v1",
+        "10.52060/juptik.v4i1.4318"
+      ],
+      "benchmark_hits": [
+        "10.21203/rs.3.rs-10423755/v1",
+        "10.52060/juptik.v4i1.4318"
       ],
       "parameters": {
-        "marker": "[NOISE_###@@@%%%]",
-        "selected_rank": 1
+        "marker": "~#"
       },
+      "expected_detector": "Khong co (silent) - chi lo qua Token F1",
       "row_count_before": 19,
       "row_count_after": 19
     },
     {
       "name": "truncate_title",
-      "affected_count": 1,
+      "description": "Cat title con 6 ky tu.",
+      "affected_count": 2,
       "affected_paper_ids": [
-        "10.21203/rs.3.rs-10423755/v1"
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.63646/kpqm1958"
+      ],
+      "benchmark_hits": [
+        "10.21203/rs.3.rs-10178277/v1",
+        "10.63646/kpqm1958"
       ],
       "parameters": {
-        "max_characters": 7,
-        "selected_rank": 2
+        "max_characters": 6
       },
+      "expected_detector": "GX ExpectColumnValueLengthsToBeBetween(title >= 8) + exact lookup fail",
       "row_count_before": 19,
       "row_count_after": 19
     },
     {
       "name": "stale_date",
-      "affected_count": 6,
+      "description": "Lui published 365 ngay.",
+      "affected_count": 7,
       "affected_paper_ids": [
-        "10.28932/jutisi.v12i2.13099",
-        "10.36948/ijfmr.2026.v08i04.85777",
-        "10.21203/rs.3.rs-10178277/v1",
-        "10.63646/kpqm1958",
-        "10.52060/juptik.v4i1.4318",
-        "10.63125/gseh0k17"
+        "10.3390/buildings16132637",
+        "10.1093/sleep/zsag091.0346",
+        "10.20944/preprints202604.0339.v1",
+        "10.20944/preprints202608.1849.v1",
+        "10.21079/11681/50309",
+        "10.2118/234689-pa",
+        "10.21203/rs.3.rs-10012178/v1"
+      ],
+      "benchmark_hits": [
+        "10.3390/buildings16132637",
+        "10.1093/sleep/zsag091.0346"
       ],
       "parameters": {
         "days_subtracted": 365,
-        "fraction": 0.3,
-        "selected_ranks": [
-          0,
-          4,
-          7,
-          11,
-          14,
-          18
-        ]
+        "fraction": 0.35
       },
+      "expected_detector": "Freshness SLA is_fresh=False (warning)",
       "row_count_before": 19,
       "row_count_after": 19
     },
     {
       "name": "duplicate_rows",
-      "affected_count": 2,
+      "description": "Nhan ban 3 dong.",
+      "affected_count": 3,
       "affected_paper_ids": [
+        "10.2196/preprints.106157",
         "10.28932/jutisi.v12i2.13099",
-        "10.20944/preprints202608.1849.v1"
+        "10.3390/knowledge6030022"
       ],
+      "benchmark_hits": [],
       "parameters": {
-        "duplicate_count": 2,
-        "selected_ranks": [
-          0,
-          1
-        ]
+        "duplicate_count": 3
       },
+      "expected_detector": "GX ExpectColumnValuesToBeUnique(paper_id)",
       "row_count_before": 19,
-      "row_count_after": 21
+      "row_count_after": 22
     }
   ]
 }
